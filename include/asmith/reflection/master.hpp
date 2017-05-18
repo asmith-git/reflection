@@ -153,21 +153,54 @@ namespace asmith {
 		};
 	}
 
-#define ASMITH_REFLECTION_TRIVIAL_CONSTRUCTOR(aMods) \
+#define ASMITH_REFLECTION_CONSTRUCTOR_0(aMods) \
 	if(i == currentConstructor) {\
 		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
-#define ASMITH_REFLECTION_CONSTRUCTOR(aMods, aParams) \
+#define ASMITH_REFLECTION_CONSTRUCTOR_1(aMods, a) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, aParams> constructor; \
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
-#define ASMITH_REFLECTION_COPY_CONSTRUCTOR(aMods) ASMITH_REFLECTION_CONSTRUCTOR(aMods, ASMITH_REFLECTION_CLASS_NAME)
+#define ASMITH_REFLECTION_CONSTRUCTOR_2(aMods, a, b) \
+	if(i == currentConstructor) {\
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b> constructor; \
+		return constructor; \
+	}\
+	++currentConstructor;
+
+#define ASMITH_REFLECTION_CONSTRUCTOR_3(aMods, a, b, c) \
+	if(i == currentConstructor) {\
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c> constructor; \
+		return constructor; \
+	}\
+	++currentConstructor;
+
+#define ASMITH_REFLECTION_CONSTRUCTOR_4(aMods, a, b, c, d) \
+	if(i == currentConstructor) {\
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d> constructor; \
+		return constructor; \
+	}\
+	++currentConstructor;
+
+#define ASMITH_REFLECTION_CONSTRUCTOR_5(aMods, a, b, c, d, e) \
+	if(i == currentConstructor) {\
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d, e> constructor; \
+		return constructor; \
+	}\
+	++currentConstructor;
+
+#define ASMITH_REFLECTION_CONSTRUCTOR_6(aMods, a, b, c, d, e, f) \
+	if(i == currentConstructor) {\
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d, e, f> constructor; \
+		return constructor; \
+	}\
+	++currentConstructor;
 
 	class reflection_test {
 	private:
@@ -181,6 +214,17 @@ namespace asmith {
 		float get_lower_bound() { return lower_bound; }
 		float get_upper_bound() { return upper_bound; }
 
+
+		reflection_test() {}
+
+		reflection_test(const reflection_test& aOther) :
+			name(aOther.name), dimensions(aOther.dimensions), lower_bound(aOther.lower_bound), upper_bound(aOther.upper_bound)
+		{}
+
+		reflection_test(const std::string& aName, int aDims, float aLBound, float aUBound) :
+			name(aName), dimensions(aDims), lower_bound(aLBound), upper_bound(aUBound)
+		{}
+
 		#define ASMITH_REFLECTION_CLASS_NAME reflection_test
 		#define ASMITH_REFLECTION_VARIABLE_COUNT 4
 		#define ASMITH_REFLECTION_CONSTRUCTOR_COUNT 0
@@ -193,8 +237,9 @@ namespace asmith {
 			ASMITH_REFLECTION_DESTRUCTOR(REFLECTION_PUBLIC)
 
 			ASMITH_BEGIN_REFLECTION_CONSTRUCTORS
-				ASMITH_REFLECTION_TRIVIAL_CONSTRUCTOR(REFLECTION_PUBLIC)
-				ASMITH_REFLECTION_COPY_CONSTRUCTOR(REFLECTION_PUBLIC)
+				ASMITH_REFLECTION_CONSTRUCTOR_0(REFLECTION_PUBLIC)
+				ASMITH_REFLECTION_CONSTRUCTOR_1(REFLECTION_PUBLIC, reflection_test)
+				//ASMITH_REFLECTION_CONSTRUCTOR_4(REFLECTION_PUBLIC, std::string, int, float, float)
 			ASMITH_END_REFLECTION_CONSTRUCTORS
 
 			ASMITH_BEGIN_REFLECTION_VARIABLES
