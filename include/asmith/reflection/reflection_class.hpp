@@ -149,7 +149,7 @@ namespace asmith {
 	size_t get_parent_count() const override { return ASMITH_REFLECTION_PARENT_COUNT; }
 #define ASMITH_END_REFLECTION };
 
-#define ASMITH_REFLECTION_VARIABLE(aIndex, aName, aMods) \
+#define ASMITH_REFLECTION_VARIABLE(aName, aMods) \
 	class MACRO_JOIN(aName,_var_class) : public asmith::reflection_variable {\
 	public:\
 		typedef decltype(ASMITH_REFLECTION_CLASS_NAME::aName) type;\
@@ -160,10 +160,11 @@ namespace asmith {
 		void get(const void* aObject, void* aOutput) const override { *static_cast<type*>(aOutput), static_cast<const ASMITH_REFLECTION_CLASS_NAME*>(aObject)->*&ASMITH_REFLECTION_CLASS_NAME::aName; }\
 	};\
 	static MACRO_JOIN(aName,_var_class) MACRO_JOIN(aName,_var);\
-	if(i == aIndex) return MACRO_JOIN(aName,_var);
+	if(i == currentVar) return MACRO_JOIN(aName,_var);\
+	++currentVar;
 
 
-#define ASMITH_BEGIN_REFLECTION_VARIABLES const asmith::reflection_variable& get_variable(size_t i) const override {
+#define ASMITH_BEGIN_REFLECTION_VARIABLES const asmith::reflection_variable& get_variable(size_t i) const override { int currentVar = 0;
 #define ASMITH_END_REFLECTION_VARIABLES throw std::runtime_error("asmith::reflection_variable::get_function : Index out of bounds"); }
 }
 
