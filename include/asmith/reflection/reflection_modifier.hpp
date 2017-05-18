@@ -15,7 +15,7 @@
 #define ASMITH_REFLECTION_MODIFIER_HPP
 
 namespace asmith {
-		enum reflection_modifier {
+	enum reflection_modifier {
 		REFLECTION_PRIVATE		= 1 << 1,
 		REFLECTION_PROTECTED	= 1 << 2,
 		REFLECTION_PUBLIC		= 1 << 3,
@@ -23,6 +23,7 @@ namespace asmith {
 		REFLECTION_CONST		= 1 << 5,
 		REFLECTION_CONSTEXPR	= 1 << 6,
 		REFLECTION_STATIC		= 1 << 7
-	}
+	};
 }
 
+#endif

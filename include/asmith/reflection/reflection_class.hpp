@@ -51,7 +51,7 @@ namespace asmith {
 		template<class T, class ENABLE = void>
 		struct reflection_class {
 			typedef void type;
-		}
+		};
 	}
 	
 	template<class T>

@@ -14,6 +14,8 @@
 #ifndef ASMITH_REFLECTION_VARIABLE_HPP
 #define ASMITH_REFLECTION_VARIABLE_HPP
 
+#include <cstdint>
+
 namespace asmith {
 	class reflection_class;
 
