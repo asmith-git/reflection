@@ -152,7 +152,7 @@ namespace asmith {
 #define ASMITH_REFLECTION_VARIABLE(aIndex, aName, aMods) \
 	class MACRO_JOIN(aName,_var_class) : public asmith::reflection_variable {\
 	public:\
-		typedef decltype(test_class::dimensions) type;\
+		typedef decltype(ASMITH_REFLECTION_CLASS_NAME::aName) type;\
 		const asmith::reflection_class& get_class() const override { return asmith::get_reflection_class<type>(); }\
 		const char* get_name() const override { return MACRO_STRING(aName); }\
 		uint32_t get_modifiers() const override { return aMods; }\
