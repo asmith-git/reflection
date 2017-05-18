@@ -37,6 +37,19 @@ namespace asmith {
 		virtual size_t get_parent_count() const = 0;
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
 	};
+	
+	namespace implementation {
+		template<class T, class ENABLE = void>
+		struct reflection_class {
+			typedef void type;
+		}
+	}
+	
+	template<class T>
+	static const reflection_class& get_reflection_class() {
+		static typename implementation::reflection_class::type REFLECTION_CLASS;
+		return REFLECTION_CLASS;
+	}
 }
 
 #endif
