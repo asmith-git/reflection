@@ -73,64 +73,64 @@ namespace asmith {
 		class reflection_constructor_implementation : public reflection_constructor {
 		private:
 			template<class A>
-			void call__(void* aObject, const void* aParams) {
-				const A* a = static_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
+			void call__(void* aObject, const void* aParams) const {
+				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
 				new(aObject) C(*a);
 			}
 
 			template<class A, class B>
-			void call__(void* aObject, const void* aParams) {
-				const A* a = static_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = static_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
+			void call__(void* aObject, const void* aParams) const {
+				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
+				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
 				new(aObject) C(*a, *b);
 			}
 
 			template<class A, class B, class C>
-			void call__(void* aObject, const void* aParams) {
-				const A* a = static_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = static_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = static_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
+			void call__(void* aObject, const void* aParams) const {
+				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
+				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
+				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
 				new(aObject) C(*a, *b, *c);
 			}
 
 			template<class A, class B, class C, class D>
-			void call__(void* aObject, const void* aParams) {
-				const A* a = static_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = static_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = static_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				const D* d = static_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
+			void call__(void* aObject, const void* aParams) const {
+				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
+				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
+				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
+				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
 				new(aObject) C(*a, *b, *c, *d);
 			}
 
 			template<class A, class B, class C, class D, class E>
-			void call__(void* aObject, const void* aParams) {
-				const A* a = static_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = static_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = static_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				const D* d = static_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
-				const E* e = static_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
+			void call__(void* aObject, const void* aParams) const {
+				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
+				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
+				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
+				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
+				const E* e = reinterpret_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
 				new(aObject) C(*a, *b, *c, *d, *e);
 			}
 
 			template<class A, class B, class C, class D, class E, class F>
-			void call__(void* aObject, const void* aParams) {
-				const A* a = static_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = static_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = static_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				const D* d = static_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
-				const E* e = static_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
-				const F* f = static_cast<const F*>(reinterpret_cast<const uint8_t*>(e) + sizeof(E));
+			void call__(void* aObject, const void* aParams) const {
+				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
+				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
+				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
+				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
+				const E* e = reinterpret_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
+				const F* f = reinterpret_cast<const F*>(reinterpret_cast<const uint8_t*>(e) + sizeof(E));
 				new(aObject) C(*a, *b, *c, *d, *e, *f);
 			}
 
-			template<size_t I = sizeof...(PARAMS)>
-			typename std::enable_if<I == 0, void>::type call_(void* aObject, const void* aParams) const {
+			template<class... P>
+			typename std::enable_if<sizeof...(P) == 0, void>::type call_(void* aObject, const void* aParams) const {
 				new(aObject) C();
 			}
 
-			template<size_t I = sizeof...(PARAMS)>
-			typename std::enable_if<I != 0, void>::type call_(void* aObject, const void* aParams) const {
-				call__<PARAMS...>(aObject, aParams);
+			template<class... P>
+			typename std::enable_if<sizeof...(P) != 0, void>::type call_(void* aObject, const void* aParams) const {
+				call__<P...>(aObject, aParams);
 			}
 		public:
 			// Inherited from reflection_constructor
@@ -154,9 +154,20 @@ namespace asmith {
 	}
 
 #define ASMITH_REFLECTION_TRIVIAL_CONSTRUCTOR(aMods) \
-	static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods> trivial_constructor;\
-	if(i == currentConstructor) return trivial_constructor;\
+	if(i == currentConstructor) {\
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods> constructor; \
+		return constructor; \
+	}\
 	++currentConstructor;
+
+#define ASMITH_REFLECTION_CONSTRUCTOR(aMods, aParams) \
+	if(i == currentConstructor) {\
+		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, aParams> constructor; \
+		return constructor; \
+	}\
+	++currentConstructor;
+
+#define ASMITH_REFLECTION_COPY_CONSTRUCTOR(aMods) ASMITH_REFLECTION_CONSTRUCTOR(aMods, ASMITH_REFLECTION_CLASS_NAME)
 
 	class reflection_test {
 	private:
@@ -183,6 +194,7 @@ namespace asmith {
 
 			ASMITH_BEGIN_REFLECTION_CONSTRUCTORS
 				ASMITH_REFLECTION_TRIVIAL_CONSTRUCTOR(REFLECTION_PUBLIC)
+				ASMITH_REFLECTION_COPY_CONSTRUCTOR(REFLECTION_PUBLIC)
 			ASMITH_END_REFLECTION_CONSTRUCTORS
 
 			ASMITH_BEGIN_REFLECTION_VARIABLES
