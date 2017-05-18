@@ -11,6 +11,10 @@
 //	See the License for the specific language governing permissions and
 //	limitations under the License.
 
+#include <type_traits>
+#include <cstdint>
+#include <string>
+
 #ifndef ASMITH_REFLECTION_CLASS_HPP
 #define ASMITH_REFLECTION_CLASS_HPP
 
@@ -48,15 +52,83 @@ namespace asmith {
 	};
 	
 	namespace implementation {
+
+		template<class T>
+		class primative_reflection_class : public asmith::reflection_class {
+		public:
+			const char* get_name() const override { return ""; } //! \todo Name
+			size_t get_size() const override { return sizeof(T); }
+			size_t get_variable_count() const override { return 0; }
+			const reflection_variable& get_variable(size_t) const override { throw std::runtime_error(""); }
+			size_t get_function_count() const override { return 0; }
+			const reflection_function& get_function(size_t) const override { throw std::runtime_error(""); }
+			size_t get_parent_count() const override { return 0; }
+			const reflection_class& get_parent_class(size_t) const override { throw std::runtime_error(""); }
+			size_t get_constructor_count() const override { return 2; }
+			const reflection_constructor& get_constructor(size_t i) const override { 
+				class trivial_constructor : public reflection_constructor {
+				public:
+					size_t get_parameter_count() const override { return 0; }
+					const reflection_class& get_parameter(size_t) const override { throw std::runtime_error(""); }
+					size_t get_modifiers() const override { return REFLECTION_PUBLIC; }
+					void call(void* aObject, const void* aParams) const override { new(aObject) T(); }
+				};
+				class copy_constructor : public reflection_constructor {
+				public:
+					size_t get_parameter_count() const override { return 1; }
+					const reflection_class& get_parameter(size_t i) const override { if(i == 0) return get_reflection_class<T>(); else throw std::runtime_error(""); }
+					size_t get_modifiers() const override { return REFLECTION_PUBLIC; }
+					void call(void* aObject, const void* aParams) const override { new(aObject) T(*static_cast<const T*>(aParams)); }
+				};
+
+				static trivial_constructor TRIVIAL_CONSTRUCTOR;
+				static copy_constructor COPY_CONSTRUCTOR;
+
+				switch (i) {
+					case 0: return TRIVIAL_CONSTRUCTOR;
+					case 1: return COPY_CONSTRUCTOR;
+					default: throw std::runtime_error("");
+				}
+			}
+			const reflection_destructor& get_destructor() const override {
+				class destructor : public reflection_destructor {
+				public:
+					size_t get_modifiers() const override { return REFLECTION_PUBLIC; }
+					void call(void* aObject) const override { static_cast<T*>(aObject)->~T(); }
+				};
+				static destructor DESTRUCTOR;
+				return DESTRUCTOR;
+			}
+		};
+
 		template<class T, class ENABLE = void>
 		struct reflection_class {
 			typedef void type;
+		};
+
+		template<class T>
+		struct reflection_class<T, typename std::enable_if<
+			std::is_same<T, bool>::value ||
+			std::is_same<T, char>::value ||
+			std::is_same<T, uint8_t>::value ||
+			std::is_same<T, uint16_t>::value ||
+			std::is_same<T, uint32_t>::value ||
+			std::is_same<T, uint64_t>::value ||
+			std::is_same<T, int8_t>::value ||
+			std::is_same<T, int16_t>::value ||
+			std::is_same<T, int32_t>::value ||
+			std::is_same<T, int64_t>::value ||
+			std::is_same<T, float>::value ||
+			std::is_same<T, double>::value ||
+			std::is_same<T, std::string>::value
+		>::type> {
+			typedef primative_reflection_class<T> type;
 		};
 	}
 	
 	template<class T>
 	static const reflection_class& get_reflection_class() {
-		static typename implementation::reflection_class::type REFLECTION_CLASS;
+		static typename implementation::reflection_class<T>::type REFLECTION_CLASS;
 		return REFLECTION_CLASS;
 	}
 }
