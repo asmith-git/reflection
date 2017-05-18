@@ -36,6 +36,15 @@ namespace asmith {
 		virtual const reflection_destructor& get_destructor() const = 0;
 		virtual size_t get_parent_count() const = 0;
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
+		
+//		virtual const reflection_constructor& get_trivial_constructor() const{
+//			const size_t s = get_constructor_count();
+//			for(size_t i = 0; i < s; ++i) {
+//				const reflection_constructor& c = get_constructor(i);
+//				if(c.get_parameter_count() == 0) return c;
+//			}
+//			throw std::runtime_error("asmith::reflection_class::get_trivial_constructor : Class does not contain a trivial constructor");
+//		}
 	};
 	
 	namespace implementation {
