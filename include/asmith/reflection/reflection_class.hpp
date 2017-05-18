@@ -12,7 +12,7 @@
 //	limitations under the License.
 
 #ifndef ASMITH_REFLECTION_CLASS_HPP
-#ifndef ASMITH_REFLECTION_CLASS_HPP
+#define ASMITH_REFLECTION_CLASS_HPP
 
 namespace asmith {
 	

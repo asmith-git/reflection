@@ -12,7 +12,7 @@
 //	limitations under the License.
 
 #ifndef ASMITH_REFLECTION_MODIFIER_HPP
-#ifndef ASMITH_REFLECTION_MODIFIER_HPP
+#define ASMITH_REFLECTION_MODIFIER_HPP
 
 namespace asmith {
 		enum reflection_modifier {

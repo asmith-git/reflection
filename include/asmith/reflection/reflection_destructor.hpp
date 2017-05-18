@@ -12,7 +12,7 @@
 //	limitations under the License.
 
 #ifndef ASMITH_REFLECTION_DESTRUCTOR_HPP
-#ifndef ASMITH_REFLECTION_DESTRUCTOR_HPP
+#define ASMITH_REFLECTION_DESTRUCTOR_HPP
 
 namespace asmith {
 	
