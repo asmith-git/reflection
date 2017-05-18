@@ -166,6 +166,16 @@ namespace asmith {
 
 #define ASMITH_BEGIN_REFLECTION_VARIABLES const asmith::reflection_variable& get_variable(size_t i) const override { int currentVar = 0;
 #define ASMITH_END_REFLECTION_VARIABLES throw std::runtime_error("asmith::reflection_variable::get_function : Index out of bounds"); }
+#define ASMITH_REFLECTION_DESTRUCTOR(aMods)\
+	const asmith::reflection_destructor& get_destructor() const override { \
+		class destructor : public reflection_destructor {\
+		public:\
+			size_t get_modifiers() const override { return aMods; }\
+			void call(void* aObject) const override { static_cast<ASMITH_REFLECTION_CLASS_NAME*>(aObject)->~ASMITH_REFLECTION_CLASS_NAME(); }\
+		};\
+		static destructor DESTRUCTOR;\
+		return DESTRUCTOR;\
+	}
 }
 
 #endif

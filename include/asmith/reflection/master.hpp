@@ -22,11 +22,17 @@
 #include "reflection_modifier.hpp"
 
 namespace asmith {
-	struct reflection_test {
+	class reflection_test {
+	private:
 		std::string name;
 		int dimensions;
 		float lower_bound;
 		float upper_bound;
+	public:
+		std::string get_name() { return name; }
+		int get_dimensions() { return dimensions; }
+		float get_lower_bound() { return lower_bound; }
+		float get_upper_bound() { return upper_bound; }
 
 		#define ASMITH_REFLECTION_CLASS_NAME reflection_test
 		#define ASMITH_REFLECTION_VARIABLE_COUNT 4
@@ -36,14 +42,15 @@ namespace asmith {
 		ASMITH_BEGIN_REFLECTION
 			const asmith::reflection_function& get_function(size_t) const override { throw 0; }
 			const asmith::reflection_constructor& get_constructor(size_t) const override { throw 0; }
-			const asmith::reflection_destructor& get_destructor() const override { throw 0; }
 			const reflection_class& get_parent_class(size_t) const override { throw 0; }
 
+			ASMITH_REFLECTION_DESTRUCTOR(REFLECTION_PUBLIC)
+
 			ASMITH_BEGIN_REFLECTION_VARIABLES
-				ASMITH_REFLECTION_VARIABLE(name,		REFLECTION_PUBLIC);
-				ASMITH_REFLECTION_VARIABLE(dimensions,	REFLECTION_PUBLIC);
-				ASMITH_REFLECTION_VARIABLE(lower_bound,	REFLECTION_PUBLIC);
-				ASMITH_REFLECTION_VARIABLE(upper_bound,	REFLECTION_PUBLIC);
+				ASMITH_REFLECTION_VARIABLE(name,		REFLECTION_PRIVATE);
+				ASMITH_REFLECTION_VARIABLE(dimensions,	REFLECTION_PRIVATE);
+				ASMITH_REFLECTION_VARIABLE(lower_bound,	REFLECTION_PRIVATE);
+				ASMITH_REFLECTION_VARIABLE(upper_bound,	REFLECTION_PRIVATE);
 			ASMITH_END_REFLECTION_VARIABLES
 		ASMITH_END_REFLECTION
 
