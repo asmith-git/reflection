@@ -75,7 +75,7 @@ namespace asmith {
 		template<class CLASS, class RETURN, class... PARAMS>
 		auto_reflection_class& function(const std::string& aName, RETURN(CLASS::*aPtr)(PARAMS...), const size_t aModifiers) {
 			mFunctions.push_back(std::shared_ptr<reflection_function>(
-				new typedef auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers);
+				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
 			));
 			return *this;
 		}
