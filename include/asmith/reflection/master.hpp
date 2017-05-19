@@ -69,20 +69,20 @@ namespace asmith {
 #define ASMITH_END_REFLECTION_CONSTRUCTORS throw std::runtime_error("asmith::reflection_variable::get_constructor : Index out of bounds"); }
 
 	namespace implementation {
-		template<class C, uint32_t MODS, class ...PARAMS>
+		template<class CLASS, uint32_t MODS, class ...PARAMS>
 		class reflection_constructor_implementation : public reflection_constructor {
 		private:
 			template<class A>
 			void call__(void* aObject, const void* aParams) const {
 				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				new(aObject) C(*a);
+				new(aObject) CLASS(*a);
 			}
 
 			template<class A, class B>
 			void call__(void* aObject, const void* aParams) const {
 				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
 				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				new(aObject) C(*a, *b);
+				new(aObject) CLASS(*a, *b);
 			}
 
 			template<class A, class B, class C>
@@ -90,7 +90,7 @@ namespace asmith {
 				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
 				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
 				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				new(aObject) C(*a, *b, *c);
+				new(aObject) CLASS(*a, *b, *c);
 			}
 
 			template<class A, class B, class C, class D>
@@ -99,7 +99,7 @@ namespace asmith {
 				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
 				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
 				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
-				new(aObject) C(*a, *b, *c, *d);
+				new(aObject) CLASS(*a, *b, *c, *d);
 			}
 
 			template<class A, class B, class C, class D, class E>
@@ -109,7 +109,7 @@ namespace asmith {
 				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
 				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
 				const E* e = reinterpret_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
-				new(aObject) C(*a, *b, *c, *d, *e);
+				new(aObject) CLASS(*a, *b, *c, *d, *e);
 			}
 
 			template<class A, class B, class C, class D, class E, class F>
@@ -120,12 +120,12 @@ namespace asmith {
 				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
 				const E* e = reinterpret_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
 				const F* f = reinterpret_cast<const F*>(reinterpret_cast<const uint8_t*>(e) + sizeof(E));
-				new(aObject) C(*a, *b, *c, *d, *e, *f);
+				new(aObject) CLASS(*a, *b, *c, *d, *e, *f);
 			}
 
 			template<class... P>
 			typename std::enable_if<sizeof...(P) == 0, void>::type call_(void* aObject, const void* aParams) const {
-				new(aObject) C();
+				new(aObject) CLASS();
 			}
 
 			template<class... P>
@@ -239,7 +239,7 @@ namespace asmith {
 			ASMITH_BEGIN_REFLECTION_CONSTRUCTORS
 				ASMITH_REFLECTION_CONSTRUCTOR_0(REFLECTION_PUBLIC)
 				ASMITH_REFLECTION_CONSTRUCTOR_1(REFLECTION_PUBLIC, reflection_test)
-				//ASMITH_REFLECTION_CONSTRUCTOR_4(REFLECTION_PUBLIC, std::string, int, float, float)
+				ASMITH_REFLECTION_CONSTRUCTOR_4(REFLECTION_PUBLIC, std::string, int, float, float)
 			ASMITH_END_REFLECTION_CONSTRUCTORS
 
 			ASMITH_BEGIN_REFLECTION_VARIABLES
