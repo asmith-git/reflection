@@ -14,6 +14,8 @@
 #include <type_traits>
 #include <cstdint>
 #include <string>
+#include <memory>
+#include <vector>
 
 #ifndef ASMITH_REFLECTION_CLASS_HPP
 #define ASMITH_REFLECTION_CLASS_HPP
@@ -42,7 +44,75 @@ namespace asmith {
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
 	};
 
-	template<class C, class T>
-	using reflection_variable_ptr = T C::*;
+	class auto_reflection_class : public reflection_class {
+	private:
+		std::vector<std::shared_ptr<reflection_class>> mParents;
+		std::vector<std::shared_ptr<reflection_constructor>> mConstructors;
+		std::vector<std::shared_ptr<reflection_variable>> mVariables;
+		std::vector<std::shared_ptr<reflection_function>> mFunctions;
+		std::shared_ptr<reflection_destructor> mDestructor;
+		const std::string mName;
+		const size_t mSize;
+	public:
+		auto_reflection_class(const std::string& aName, const size_t aSize) :
+			mName(aName),
+			mSize(aSize)
+		{}
+
+		//! \todo Add parent_classes, constructors, variables and destructor
+
+		template<class CLASS, class RETURN, class... PARAMS>
+		auto_reflection_class& function(const std::string& aName, RETURN(CLASS::*aPtr)(PARAMS...), const size_t aModifiers) {
+			mFunctions.push_back(std::shared_ptr<reflection_function>(
+				new typedef auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers);
+			));
+			return *this;
+		}
+
+		// Inherited from reflection_class
+		const char* get_name() const override {
+			mName.c_str();
+		}
+
+		size_t get_size() const override {
+			return mSize;
+		}
+
+		size_t get_variable_count() const override {
+			return mVariables.size();
+		}
+
+		const reflection_variable& get_variable(size_t aIndex) const override {
+			return *mVariables[aIndex];
+		}
+
+		size_t get_function_count() const override {
+			return mFunctions.size();
+		}
+
+		const reflection_function& get_function(size_t aIndex) const override {
+			return *mFunctions[aIndex];
+		}
+
+		size_t get_constructor_count() const override {
+			return mConstructors.size();
+		}
+
+		const reflection_constructor& get_constructor(size_t aIndex) const override {
+			return *mConstructors[aIndex];
+		}
+
+		const reflection_destructor& get_destructor() const override {
+			return *mDestructor;
+		}
+
+		size_t get_parent_count() const override {
+			return mParents.size();
+		}
+
+		const reflection_class& get_parent_class(size_t aIndex) const override {
+			return *mParents[aIndex];
+		}
+	};
 }
 #endif
