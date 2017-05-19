@@ -44,9 +44,14 @@ namespace asmith {
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
 	};
 
+	template<class T>
+	const reflection_class& reflect() {
+		return T::REFLECTION;
+	}
+
 	class auto_reflection_class : public reflection_class {
 	private:
-		std::vector<std::shared_ptr<reflection_class>> mParents;
+		std::vector<const reflection_class*> mParents;
 		std::vector<std::shared_ptr<reflection_constructor>> mConstructors;
 		std::vector<std::shared_ptr<reflection_variable>> mVariables;
 		std::vector<std::shared_ptr<reflection_function>> mFunctions;
@@ -59,7 +64,13 @@ namespace asmith {
 			mSize(aSize)
 		{}
 
-		//! \todo Add parent_classes, constructors, variables and destructor
+		//! \todo Add constructors, variables and destructor
+
+		template<class CLASS>
+		auto_reflection_class& parent() {
+			mFunctions.push_back(&reflect<CLASS>());
+			return *this;
+		}
 
 		template<class CLASS, class RETURN, class... PARAMS>
 		auto_reflection_class& function(const std::string& aName, RETURN(CLASS::*aPtr)(PARAMS...), const size_t aModifiers) {
