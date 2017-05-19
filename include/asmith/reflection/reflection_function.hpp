@@ -14,6 +14,8 @@
 #ifndef ASMITH_REFLECTION_FUNCTION_HPP
 #define ASMITH_REFLECTION_FUNCTION_HPP
 
+#include <string>
+
 namespace asmith {
 	
 	class reflection_class;
@@ -77,6 +79,47 @@ namespace asmith {
 			call_(&aObject, &tmp, &p1);
 			return tmp;
 		}
+	};
+
+	template<class CLASS, class RETURN, class... PARAMS>
+	class auto_reflection_function : public reflection_function {
+	private:
+		const std::string mName;
+		const size_t mModifiers;
+	protected:
+		// Inherited from reflection_function
+		void call_(void* aObject, void* aReturn, const void* aParams) const override {
+			//! \todo Implement
+			throw 0;
+		}
+	public:
+		auto_reflection_function(const std::string& aName, const size_t aModifiers) :
+			mName(aName),
+			mModifiers(aModifiers)
+		{}
+
+		// Inherited from reflection_function
+		const char* get_name() const override {
+			return mName.c_str();
+		}
+
+		size_t get_parameter_count() const override {
+			return sizeof...(PARAMS);
+		}
+
+		const reflection_class& get_parameter(size_t aIndex) const override {
+			//! \todo Implement
+			throw 0;
+		};
+
+		const reflection_class& get_return() const override {
+			//! \todo Implement
+			throw 0;
+		};
+
+		size_t get_modifiers() const override {
+			return mModifiers;
+		};
 	};
 }
 
