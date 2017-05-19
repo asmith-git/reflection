@@ -32,18 +32,19 @@ namespace asmith {
 		};
 	};
 
-	template<size_t I, bool CHECK, class ...TYPES>
-	struct type_at_index_ {
-		typedef decltype(std::get<I>(std::tuple<TYPES...>())) type;
-	};
-
 	template<size_t I, class ...TYPES>
-	struct type_at_index_<I, false, TYPES...> {
-		typedef void type;
-	};
+	class type_at_index {
+	private:
+		template<size_t I, bool CHECK, class ...TYPES>
+		struct type_at_index_ {
+			typedef decltype(std::get<I>(std::tuple<TYPES...>())) type;
+		};
 
-	template<size_t I, class ...TYPES>
-	struct type_at_index {
+		template<size_t I, class ...TYPES>
+		struct type_at_index_<I, false, TYPES...> {
+			typedef void type;
+		};
+	public:
 		typedef typename type_at_index_<I, template_value_comparison<size_t, I, sizeof...(TYPES)>::LESS, TYPES...>::type type;
 	};
 }
