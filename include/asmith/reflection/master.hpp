@@ -14,12 +14,14 @@
 #ifndef ASMITH_REFLECTION_MASTER_HPP
 #define ASMITH_REFLECTION_MASTER_HPP
 
+#include <tuple>
 #include "reflection_class.hpp"
 #include "reflection_constructor.hpp"
 #include "reflection_destructor.hpp"
 #include "reflection_function.hpp"
 #include "reflection_variable.hpp"
 #include "reflection_modifier.hpp"
+#include "template_helper.hpp"
 
 namespace asmith {
 
@@ -68,136 +70,51 @@ namespace asmith {
 #define ASMITH_BEGIN_REFLECTION_CONSTRUCTORS const asmith::reflection_constructor& get_constructor(size_t i) const override { int currentConstructor = 0;
 #define ASMITH_END_REFLECTION_CONSTRUCTORS throw std::runtime_error("asmith::reflection_variable::get_constructor : Index out of bounds"); }
 
-	namespace implementation {
-		template<class CLASS, uint32_t MODS, class ...PARAMS>
-		class reflection_constructor_implementation : public reflection_constructor {
-		private:
-			template<class A>
-			void call__(void* aObject, const void* aParams) const {
-				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				new(aObject) CLASS(*a);
-			}
-
-			template<class A, class B>
-			void call__(void* aObject, const void* aParams) const {
-				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				new(aObject) CLASS(*a, *b);
-			}
-
-			template<class A, class B, class C>
-			void call__(void* aObject, const void* aParams) const {
-				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				new(aObject) CLASS(*a, *b, *c);
-			}
-
-			template<class A, class B, class C, class D>
-			void call__(void* aObject, const void* aParams) const {
-				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
-				new(aObject) CLASS(*a, *b, *c, *d);
-			}
-
-			template<class A, class B, class C, class D, class E>
-			void call__(void* aObject, const void* aParams) const {
-				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
-				const E* e = reinterpret_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
-				new(aObject) CLASS(*a, *b, *c, *d, *e);
-			}
-
-			template<class A, class B, class C, class D, class E, class F>
-			void call__(void* aObject, const void* aParams) const {
-				const A* a = reinterpret_cast<const A*>(reinterpret_cast<const uint8_t*>(aParams) + 0);
-				const B* b = reinterpret_cast<const B*>(reinterpret_cast<const uint8_t*>(a) + sizeof(A));
-				const C* c = reinterpret_cast<const C*>(reinterpret_cast<const uint8_t*>(b) + sizeof(B));
-				const D* d = reinterpret_cast<const D*>(reinterpret_cast<const uint8_t*>(c) + sizeof(C));
-				const E* e = reinterpret_cast<const E*>(reinterpret_cast<const uint8_t*>(d) + sizeof(D));
-				const F* f = reinterpret_cast<const F*>(reinterpret_cast<const uint8_t*>(e) + sizeof(E));
-				new(aObject) CLASS(*a, *b, *c, *d, *e, *f);
-			}
-
-			template<class... P>
-			typename std::enable_if<sizeof...(P) == 0, void>::type call_(void* aObject, const void* aParams) const {
-				new(aObject) CLASS();
-			}
-
-			template<class... P>
-			typename std::enable_if<sizeof...(P) != 0, void>::type call_(void* aObject, const void* aParams) const {
-				call__<P...>(aObject, aParams);
-			}
-		public:
-			// Inherited from reflection_constructor
-			size_t get_parameter_count() const override {
-				return sizeof...(PARAMS); 
-			}
-			
-			const asmith::reflection_class& get_parameter(size_t i) const override { 
-				//! \todo Implement
-				throw std::runtime_error("asmith::reflection_constructor_implementation::get_parameter : Not yet implemented"); 
-			}
-
-			size_t get_modifiers() const override {
-				return MODS;
-			}
-
-			void call(void* aObject, const void* aParams) const override {
-				call_<PARAMS...>(aObject, aParams);
-			}
-		};
-	}
-
 #define ASMITH_REFLECTION_CONSTRUCTOR_0(aMods) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods> constructor; \
+		static asmith::auto_reflection_constructor<ASMITH_REFLECTION_CLASS_NAME, aMods> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
 #define ASMITH_REFLECTION_CONSTRUCTOR_1(aMods, a) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a> constructor; \
+		static asmith::auto_reflection_constructor<ASMITH_REFLECTION_CLASS_NAME, aMods, a> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
 #define ASMITH_REFLECTION_CONSTRUCTOR_2(aMods, a, b) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b> constructor; \
+		static asmith::auto_reflection_constructor<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
 #define ASMITH_REFLECTION_CONSTRUCTOR_3(aMods, a, b, c) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c> constructor; \
+		static asmith::auto_reflection_constructor<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
 #define ASMITH_REFLECTION_CONSTRUCTOR_4(aMods, a, b, c, d) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d> constructor; \
+		static asmith::auto_reflection_constructor<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
 #define ASMITH_REFLECTION_CONSTRUCTOR_5(aMods, a, b, c, d, e) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d, e> constructor; \
+		static asmith::auto_reflection_constructor<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d, e> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
 
 #define ASMITH_REFLECTION_CONSTRUCTOR_6(aMods, a, b, c, d, e, f) \
 	if(i == currentConstructor) {\
-		static implementation::reflection_constructor_implementation<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d, e, f> constructor; \
+		static asmith::auto_reflection_constructor<ASMITH_REFLECTION_CLASS_NAME, aMods, a, b, c, d, e, f> constructor; \
 		return constructor; \
 	}\
 	++currentConstructor;
@@ -237,9 +154,9 @@ namespace asmith {
 			ASMITH_REFLECTION_DESTRUCTOR(REFLECTION_PUBLIC)
 
 			ASMITH_BEGIN_REFLECTION_CONSTRUCTORS
-				ASMITH_REFLECTION_CONSTRUCTOR_0(REFLECTION_PUBLIC)
-				ASMITH_REFLECTION_CONSTRUCTOR_1(REFLECTION_PUBLIC, reflection_test)
-				ASMITH_REFLECTION_CONSTRUCTOR_4(REFLECTION_PUBLIC, std::string, int, float, float)
+				//ASMITH_REFLECTION_CONSTRUCTOR_0(REFLECTION_PUBLIC)
+				//ASMITH_REFLECTION_CONSTRUCTOR_1(REFLECTION_PUBLIC, reflection_test)
+				//ASMITH_REFLECTION_CONSTRUCTOR_4(REFLECTION_PUBLIC, std::string, int, float, float)
 			ASMITH_END_REFLECTION_CONSTRUCTORS
 
 			ASMITH_BEGIN_REFLECTION_VARIABLES
