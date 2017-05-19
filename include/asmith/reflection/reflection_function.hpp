@@ -87,8 +87,8 @@ namespace asmith {
 		typedef RETURN(CLASS::*ptr_t)(PARAMS...);
 	private:
 		const std::string mName;
-		const size_t mModifiers;
 		const ptr_t mPointer;
+		const size_t mModifiers;
 		
 		//! \todo Implement for void return functions
 
@@ -154,7 +154,7 @@ namespace asmith {
 			call__<RETURN, PARAMS...>(aObject, aReturn, aParams);
 		}
 	public:
-		auto_reflection_function(const std::string& aName, const size_t aModifiers, const ptr_t aPtr) :
+		auto_reflection_function(const std::string& aName, const ptr_t aPtr, const size_t aModifiers) :
 			mName(aName),
 			mModifiers(aModifiers),
 			mPointer(aPtr)
