@@ -89,18 +89,67 @@ namespace asmith {
 		const std::string mName;
 		const ptr_t mPointer;
 		const size_t mModifiers;
-		
-		//! \todo Implement for void return functions
 
 		template<class R>
-		void call__(void* aObject, void* aReturn, const void* aParams) const {
+		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
+			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+			((obj).*(mPointer))();
+		}
+
+		template<class R, class P1>
+		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
+			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
+			((obj).*(mPointer))(*p1);
+		}
+
+		template<class R, class P1, class P2>
+		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
+			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
+			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
+			((obj).*(mPointer))(*p1, *p2);
+		}
+
+		template<class R, class P1, class P2, class P3>
+		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
+			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
+			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
+			const P3* const p3 = reinterpret_cast<const P3*>(reinterpret_cast<const uint8_t*>(p2) + sizeof(P2));
+			((obj).*(mPointer))(*p1, *p2, *p3);
+		}
+
+		template<class R, class P1, class P2, class P3, class P4>
+		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
+			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
+			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
+			const P3* const p3 = reinterpret_cast<const P3*>(reinterpret_cast<const uint8_t*>(p2) + sizeof(P2));
+			const P4* const p3 = reinterpret_cast<const P4*>(reinterpret_cast<const uint8_t*>(p3) + sizeof(P3));
+			((obj).*(mPointer))(*p1, *p2, *p3, *p4);
+		}
+
+		template<class R, class P1, class P2, class P3, class P4, class P5>
+		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
+			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
+			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
+			const P3* const p3 = reinterpret_cast<const P3*>(reinterpret_cast<const uint8_t*>(p2) + sizeof(P2));
+			const P4* const p3 = reinterpret_cast<const P4*>(reinterpret_cast<const uint8_t*>(p3) + sizeof(P3));
+			const P5* const p3 = reinterpret_cast<const P5*>(reinterpret_cast<const uint8_t*>(p4) + sizeof(P4));
+			((obj).*(mPointer))(*p1, *p2, *p3, *p4, *p5);
+		}
+
+		template<class R>
+		typename std::enable_if<! std::is_same<R,void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
 			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
 			R& ret = *reinterpret_cast<RETURN*>(aReturn);
 			ret = ((obj).*(mPointer))();
 		}
 
 		template<class R, class P1>
-		void call__(void* aObject, void* aReturn, const void* aParams) const {
+		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
 			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
 			R& ret = *reinterpret_cast<RETURN*>(aReturn);
 			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
@@ -108,7 +157,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2>
-		void call__(void* aObject, void* aReturn, const void* aParams) const {
+		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
 			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
 			R& ret = *reinterpret_cast<RETURN*>(aReturn);
 			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
@@ -117,7 +166,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2, class P3>
-		void call__(void* aObject, void* aReturn, const void* aParams) const {
+		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
 			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
 			R& ret = *reinterpret_cast<RETURN*>(aReturn);
 			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
@@ -127,7 +176,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2, class P3, class P4>
-		void call__(void* aObject, void* aReturn, const void* aParams) const {
+		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
 			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
 			R& ret = *reinterpret_cast<RETURN*>(aReturn);
 			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
@@ -138,7 +187,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2, class P3, class P4, class P5>
-		void call__(void* aObject, void* aReturn, const void* aParams) const {
+		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, const void* aParams) const {
 			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
 			R& ret = *reinterpret_cast<RETURN*>(aReturn);
 			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
