@@ -46,7 +46,7 @@ namespace asmith {
 
 	template<class T>
 	const reflection_class& reflect() {
-		return T::REFLECTION;
+		throw std::runtime_error("asmith::reflect : Reflection not defined for this type");
 	}
 
 	class auto_reflection_class : public reflection_class {
@@ -82,7 +82,7 @@ namespace asmith {
 
 		// Inherited from reflection_class
 		const char* get_name() const override {
-			mName.c_str();
+			return mName.c_str();
 		}
 
 		size_t get_size() const override {
@@ -125,5 +125,32 @@ namespace asmith {
 			return *mParents[aIndex];
 		}
 	};
+
+	template<>
+	const reflection_class& reflect<void>() {
+		static const auto_reflection_class REFLECTION("void", 0);
+		return REFLECTION;
+	}
+
+
+#define ASMITH_REFLECTION_PRIMATIVE_REFLECT(aName)\
+	template<>\
+	const reflection_class& reflect<aName>() {\
+		static const auto_reflection_class REFLECTION(#aName, sizeof(aName));\
+		return REFLECTION;\
+	}
+
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(bool)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(char)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint8_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint16_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint32_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint64_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int8_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int16_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int32_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int64_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(float)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(double)
 }
 #endif
