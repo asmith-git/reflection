@@ -19,6 +19,8 @@ namespace asmith {
 	class reflection_class;
 	
 	class reflection_function {
+	protected:
+		virtual void call_(void*, void*, const void*) const = 0;
 	public:
 		virtual ~reflection_function() {}
 		
@@ -27,7 +29,54 @@ namespace asmith {
 		virtual const reflection_class& get_parameter(size_t) const = 0;
 		virtual const reflection_class& get_return() const = 0;
 		virtual size_t get_modifiers() const = 0;
-		virtual void call(void*, void*, const void*) const = 0;
+
+		template<class T, class R>
+		R call(T& aObject) const {
+			//! \todo Check return type
+			R tmp;
+			call_(&aObject, &tmp, nullptr);
+			return tmp;
+		}
+
+		template<class T, class R, class P1>
+		R call(T& aObject, P1 p1) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_(&aObject, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class T, class R, class P1, class P2>
+		R call(T& aObject, P1 p1, P2 p2) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_(&aObject, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class T, class R, class P1, class P2, class P3>
+		R call(T& aObject, P1 p1, P2 p2, P3 p3) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_(&aObject, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class T, class R, class P1, class P2, class P3, class P4>
+		R call(T& aObject, P1 p1, P2 p2, P3 p3, P4 p4) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_(&aObject, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class T, class R, class P1, class P2, class P3, class P4, class P5>
+		R call(T& aObject, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_(&aObject, &tmp, &p1);
+			return tmp;
+		}
 	};
 }
 
