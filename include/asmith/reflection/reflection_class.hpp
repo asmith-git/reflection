@@ -64,6 +64,11 @@ namespace asmith {
 		struct function_ptr {
 			typedef RETURN(C::*type)(PARAMS...);
 		};
+
+		template<class C, class T>
+		struct variable_ptr {
+			typedef T(C::*type);
+		};
 	public:
 		auto_reflection_class(const std::string& aName) :
 			mName(aName),
@@ -79,6 +84,14 @@ namespace asmith {
 
 		auto_reflection_class& parent() {
 			mFunctions.push_back(&reflect<CLASS>());
+			return *this;
+		}
+
+		template<class T>
+		auto_reflection_class& variable(const std::string& aName, typename variable_ptr<CLASS, T>::type aPtr, const size_t aModifiers) {
+			mVariables.push_back(std::shared_ptr<reflection_variable>(
+				new auto_reflection_variable<CLASS, T>(aName, aPtr, aModifiers)
+			));
 			return *this;
 		}
 

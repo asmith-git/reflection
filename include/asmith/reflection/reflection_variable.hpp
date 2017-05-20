@@ -20,14 +20,74 @@ namespace asmith {
 	class reflection_class;
 
 	class reflection_variable {
+	protected:
+		virtual void set_(void*, const void*) const = 0;
+		virtual void get_(const void*, void*) const = 0;
 	public:
 		virtual ~reflection_variable() {}
 		
 		virtual const reflection_class& get_class() const = 0;
 		virtual const char* get_name() const = 0;
 		virtual uint32_t get_modifiers() const = 0;
-		virtual void set(void*, const void*) const = 0;
-		virtual void get(const void*, void*) const = 0;
+
+		template<class CLASS, class T>
+		void set(CLASS& aObject, T aValue) const {
+			//! \todo Check type
+			set_(&aObject, &aValue);
+		}
+
+		template<class CLASS, class T>
+		T get(const CLASS& aObject, T aValue) const {
+			//! \todo Check type
+			T tmp;
+			get_(&aObject, &tmp);
+			return tmp;
+		}
+	};
+
+	template<class CLASS, class T>
+	class auto_reflection_variable : public reflection_variable {
+	public:
+		typedef T(CLASS::*ptr_t);
+	private:
+		const std::string mName;
+		const ptr_t mPointer;
+		const size_t mModifiers;
+	protected:
+		// Inherited from reflection_variable
+
+		void set_(void* aObject, const void* aValue) const override {
+			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+			const T& val = *reinterpret_cast<const T*>(aValue);
+			((obj).*(mPointer)) = val;
+		}
+
+		void get_(const void* aObject, void* aValue) const override {
+			const CLASS& obj = *reinterpret_cast<const CLASS*>(aObject);
+			T& val = *reinterpret_cast<T*>(aValue);
+			val = ((obj).*(mPointer));
+		}
+
+	public:
+		auto_reflection_variable(const std::string& aName, const ptr_t aPtr, const size_t aModifiers) :
+			mName(aName),
+			mModifiers(aModifiers),
+			mPointer(aPtr)
+		{}
+
+		// Inherited from reflection_function
+
+		const char* get_name() const override {
+			return mName.c_str();
+		}
+
+		const reflection_class& get_class() const override {
+			return reflect<T>();
+		};
+
+		size_t get_modifiers() const override {
+			return mModifiers;
+		};
 	};
 }
 
