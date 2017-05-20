@@ -25,6 +25,26 @@ namespace asmith {
 		virtual size_t get_modifiers() const = 0;
 		virtual void call(void*) const = 0;
 	};
+
+	template<class CLASS>
+	class auto_reflection_destructor : public reflection_destructor {
+	private:
+		const size_t mModifiers;
+	public:
+		auto_reflection_destructor(size_t aModifiers) : 
+			mModifiers(aModifiers)
+		{}
+
+		// Inherited from reflection_destructor
+
+		size_t get_modifiers() const override {
+			return mModifiers;
+		}
+
+		void call(void* aObject) const override {
+			reinterpret_cast<CLASS*>(aObject)->~CLASS();
+		}
+	};
 }
 
 #endif
