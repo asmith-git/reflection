@@ -132,6 +132,7 @@ namespace asmith {
 			case 3: return reflect<type_at_index<3, PARAMS...>::type>();
 			case 4: return reflect<type_at_index<4, PARAMS...>::type>();
 			case 5: return reflect<type_at_index<5, PARAMS...>::type>();
+			default: throw std::runtime_error("asmith::reflection_constructor::get_parameter : Index out of bounds");
 			}
 		}
 
