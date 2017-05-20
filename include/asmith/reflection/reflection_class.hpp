@@ -138,7 +138,14 @@ namespace asmith {
 			auto_reflection_class_(aName, aSize)
 		{}
 
-		//! \todo Add constructors, variables and destructor
+		//! \todo Add constructor
+
+		auto_reflection_class& destructor(const size_t aModifiers) {
+			mDestructor.swap(std::shared_ptr<reflection_destructor>(
+				new auto_reflection_destructor<CLASS>(aModifiers)
+			));
+			return *this;
+		}
 
 		template<class PARENT>
 		auto_reflection_class& parent() {
