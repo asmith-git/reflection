@@ -63,6 +63,8 @@ namespace asmith {
 			template<class C, class RETURN, class... PARAMS>
 			struct function_ptr {
 				typedef RETURN(C::*type)(PARAMS...);
+				typedef RETURN(C::*const_type)(PARAMS...) const;
+				typedef RETURN(*static_type)(PARAMS...);
 			};
 
 			template<class C, class T>
@@ -171,7 +173,23 @@ namespace asmith {
 		auto_reflection_class& function(const std::string& aName, typename function_ptr<CLASS, RETURN, PARAMS...>::type aPtr, const size_t aModifiers) {
 			mFunctions.push_back(std::shared_ptr<reflection_function>(
 				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
+				));
+			return *this;
+		}
+
+		template<class RETURN, class... PARAMS>
+		auto_reflection_class& function(const std::string& aName, typename function_ptr<CLASS, RETURN, PARAMS...>::const_type aPtr, const size_t aModifiers) {
+			mFunctions.push_back(std::shared_ptr<reflection_function>(
+				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
 			));
+			return *this;
+		}
+
+		template<class RETURN, class... PARAMS>
+		auto_reflection_class& function(const std::string& aName, typename function_ptr<CLASS, RETURN, PARAMS...>::static_type aPtr, const size_t aModifiers) {
+			mFunctions.push_back(std::shared_ptr<reflection_function>(
+				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
+				));
 			return *this;
 		}
 	};
