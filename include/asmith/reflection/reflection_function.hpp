@@ -228,15 +228,15 @@ namespace asmith {
 			case 4: return reflect<type_at_index<4, PARAMS...>::type>();
 			case 5: return reflect<type_at_index<5, PARAMS...>::type>();
 			}
-		};
+		}
 
 		const reflection_class& get_return() const override {
 			return reflect<RETURN>();
-		};
+		}
 
 		size_t get_modifiers() const override {
 			return mModifiers;
-		};
+		}
 	};
 }
 
