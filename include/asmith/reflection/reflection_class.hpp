@@ -14,6 +14,8 @@
 #include <type_traits>
 #include <cstdint>
 #include <string>
+#include <memory>
+#include <vector>
 
 #ifndef ASMITH_REFLECTION_CLASS_HPP
 #define ASMITH_REFLECTION_CLASS_HPP
@@ -40,99 +42,202 @@ namespace asmith {
 		virtual const reflection_destructor& get_destructor() const = 0;
 		virtual size_t get_parent_count() const = 0;
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
-		
-//		virtual const reflection_constructor& get_trivial_constructor() const{
-//			const size_t s = get_constructor_count();
-//			for(size_t i = 0; i < s; ++i) {
-//				const reflection_constructor& c = get_constructor(i);
-//				if(c.get_parameter_count() == 0) return c;
-//			}
-//			throw std::runtime_error("asmith::reflection_class::get_trivial_constructor : Class does not contain a trivial constructor");
-//		}
 	};
-	
-	namespace implementation {
 
-		template<class T>
-		class primative_reflection_class : public asmith::reflection_class {
-		public:
-			const char* get_name() const override { return ""; } //! \todo Name
-			size_t get_size() const override { return sizeof(T); }
-			size_t get_variable_count() const override { return 0; }
-			const reflection_variable& get_variable(size_t) const override { throw std::runtime_error(""); }
-			size_t get_function_count() const override { return 0; }
-			const reflection_function& get_function(size_t) const override { throw std::runtime_error(""); }
-			size_t get_parent_count() const override { return 0; }
-			const reflection_class& get_parent_class(size_t) const override { throw std::runtime_error(""); }
-			size_t get_constructor_count() const override { return 2; }
-			const reflection_constructor& get_constructor(size_t i) const override { 
-				class trivial_constructor : public reflection_constructor {
-				public:
-					size_t get_parameter_count() const override { return 0; }
-					const reflection_class& get_parameter(size_t) const override { throw std::runtime_error(""); }
-					size_t get_modifiers() const override { return REFLECTION_PUBLIC; }
-					void call(void* aObject, const void* aParams) const override { new(aObject) T(); }
-				};
-				class copy_constructor : public reflection_constructor {
-				public:
-					size_t get_parameter_count() const override { return 1; }
-					const reflection_class& get_parameter(size_t i) const override { if(i == 0) return get_reflection_class<T>(); else throw std::runtime_error(""); }
-					size_t get_modifiers() const override { return REFLECTION_PUBLIC; }
-					void call(void* aObject, const void* aParams) const override { new(aObject) T(*static_cast<const T*>(aParams)); }
-				};
-
-				static trivial_constructor TRIVIAL_CONSTRUCTOR;
-				static copy_constructor COPY_CONSTRUCTOR;
-
-				switch (i) {
-					case 0: return TRIVIAL_CONSTRUCTOR;
-					case 1: return COPY_CONSTRUCTOR;
-					default: throw std::runtime_error("");
-				}
-			}
-			const reflection_destructor& get_destructor() const override {
-				class destructor : public reflection_destructor {
-				public:
-					size_t get_modifiers() const override { return REFLECTION_PUBLIC; }
-					void call(void* aObject) const override { static_cast<T*>(aObject)->~T(); }
-				};
-				static destructor DESTRUCTOR;
-				return DESTRUCTOR;
-			}
-		};
-
-		template<class T, class ENABLE = void>
-		struct reflection_class {
-			typedef void type;
-		};
-
-		template<class T>
-		struct reflection_class<T, typename std::enable_if<
-			std::is_same<T, bool>::value ||
-			std::is_same<T, char>::value ||
-			std::is_same<T, uint8_t>::value ||
-			std::is_same<T, uint16_t>::value ||
-			std::is_same<T, uint32_t>::value ||
-			std::is_same<T, uint64_t>::value ||
-			std::is_same<T, int8_t>::value ||
-			std::is_same<T, int16_t>::value ||
-			std::is_same<T, int32_t>::value ||
-			std::is_same<T, int64_t>::value ||
-			std::is_same<T, float>::value ||
-			std::is_same<T, double>::value ||
-			std::is_same<T, std::string>::value
-		>::type> {
-			typedef primative_reflection_class<T> type;
-		};
-	}
-	
 	template<class T>
-	static const reflection_class& get_reflection_class() {
-		static typename implementation::reflection_class<T>::type REFLECTION_CLASS;
-		return REFLECTION_CLASS;
+	const reflection_class& reflect() {
+		throw std::runtime_error("asmith::reflect : Reflection not defined for this type");
 	}
 
-	template<class C, class T>
-	using reflection_variable_ptr = T C::*;
+	namespace implementation {
+		class auto_reflection_class_ : public reflection_class {
+		protected:
+			std::vector<const reflection_class*> mParents;
+			std::vector<std::shared_ptr<reflection_constructor>> mConstructors;
+			std::vector<std::shared_ptr<reflection_variable>> mVariables;
+			std::vector<std::shared_ptr<reflection_function>> mFunctions;
+			std::shared_ptr<reflection_destructor> mDestructor;
+			const std::string mName;
+			const size_t mSize;
+
+			template<class C, class RETURN, class... PARAMS>
+			struct function_ptr {
+				typedef RETURN(C::*type)(PARAMS...);
+			};
+
+			template<class C, class T>
+			struct variable_ptr {
+				typedef T(C::*type);
+			};
+		public:
+			auto_reflection_class_(const std::string& aName, const size_t aSize) :
+				mName(aName),
+				mSize(aSize)
+			{}
+
+			virtual ~auto_reflection_class_() {
+
+			}
+
+			// Inherited from reflection_class
+
+			const char* get_name() const override {
+				return mName.c_str();
+			}
+
+			size_t get_size() const override {
+				return mSize;
+			}
+
+			size_t get_variable_count() const override {
+				return mVariables.size();
+			}
+
+			const reflection_variable& get_variable(size_t aIndex) const override {
+				return *mVariables[aIndex];
+			}
+
+			size_t get_function_count() const override {
+				return mFunctions.size();
+			}
+
+			const reflection_function& get_function(size_t aIndex) const override {
+				return *mFunctions[aIndex];
+			}
+
+			size_t get_constructor_count() const override {
+				return mConstructors.size();
+			}
+
+			const reflection_constructor& get_constructor(size_t aIndex) const override {
+				return *mConstructors[aIndex];
+			}
+
+			const reflection_destructor& get_destructor() const override {
+				return *mDestructor;
+			}
+
+			size_t get_parent_count() const override {
+				return mParents.size();
+			}
+
+			const reflection_class& get_parent_class(size_t aIndex) const override {
+				return *mParents[aIndex];
+			}
+		};
+	}
+
+	template<class CLASS>
+	class auto_reflection_class : public implementation::auto_reflection_class_ {
+	public:
+		auto_reflection_class(const std::string& aName) :
+			auto_reflection_class_(aName, sizeof(CLASS))
+		{}
+
+		auto_reflection_class(const std::string& aName, const size_t aSize) :
+			auto_reflection_class_(aName, aSize)
+		{}
+
+		//! \todo Add constructors, variables and destructor
+
+		template<class PARENT>
+		auto_reflection_class& parent() {
+			mFunctions.push_back(&reflect<PARENT>());
+			return *this;
+		}
+
+		template<class T>
+		auto_reflection_class& variable(const std::string& aName, typename variable_ptr<CLASS, T>::type aPtr, const size_t aModifiers) {
+			mVariables.push_back(std::shared_ptr<reflection_variable>(
+				new auto_reflection_variable<CLASS, T>(aName, aPtr, aModifiers)
+			));
+			return *this;
+		}
+
+		template<class RETURN, class... PARAMS>
+		auto_reflection_class& function(const std::string& aName, typename function_ptr<CLASS, RETURN, PARAMS...>::type aPtr, const size_t aModifiers) {
+			mFunctions.push_back(std::shared_ptr<reflection_function>(
+				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
+			));
+			return *this;
+		}
+	};
+
+	template<>
+	class auto_reflection_class<void> : public reflection_class {
+	public:
+		// Inherited from reflection_class
+
+		const char* get_name() const override {
+			return "void";
+		}
+
+		size_t get_size() const override {
+			return 0;
+		}
+
+		size_t get_variable_count() const override {
+			return 0;
+		}
+
+		const reflection_variable& get_variable(size_t aIndex) const override {
+			throw std::runtime_error("asmith::reflection_class::get_variable : Type is void");
+		}
+
+		size_t get_function_count() const override {
+			return 0;
+		}
+
+		const reflection_function& get_function(size_t aIndex) const override {
+			throw std::runtime_error("asmith::get_function::get_variable : Type is void");
+		}
+
+		size_t get_constructor_count() const override {
+			return 0;
+		}
+
+		const reflection_constructor& get_constructor(size_t aIndex) const override {
+			throw std::runtime_error("asmith::get_function::get_constructor : Type is void");
+		}
+
+		const reflection_destructor& get_destructor() const override {
+			throw std::runtime_error("asmith::get_function::get_destructor : Type is void");
+		}
+
+		size_t get_parent_count() const override {
+			return 0;
+		}
+
+		const reflection_class& get_parent_class(size_t aIndex) const override {
+			throw std::runtime_error("asmith::get_function::get_parent_class : Type is void");
+		}
+	};
+
+	template<>
+	const reflection_class& reflect<void>() {
+		static const auto_reflection_class<void> REFLECTION;
+		return REFLECTION;
+	}
+
+
+#define ASMITH_REFLECTION_PRIMATIVE_REFLECT(aName)\
+	template<>\
+	const reflection_class& reflect<aName>() {\
+		static const auto_reflection_class<aName> REFLECTION(#aName);\
+		return REFLECTION;\
+	}
+
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(bool)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(char)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint8_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint16_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint32_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint64_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int8_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int16_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int32_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int64_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(float)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT(double)
 }
 #endif
