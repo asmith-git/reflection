@@ -47,11 +47,13 @@ public:
 	}
 };
 
-// This function allows the reflection system to reflect the class when it is used as a function parameter or return type
+// This specialisation tells the reflection library which reflection_class to use when the type is used as a variable, fuction return or parameter
 namespace asmith {
 	template<>
-	const reflection_class& reflect<objective_function>() {
-		return objective_function::get_reflection();
-	}
+	struct reflection_specialisation<objective_function> {
+		static inline const reflection_class& reflect() {
+			return objective_function::get_reflection();
+		}
+	};
 }
 ```

@@ -44,9 +44,16 @@ namespace asmith {
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
 	};
 
+	template<class T, typename ENABLE = void>
+	struct reflection_specialisation {
+		static const reflection_class& reflect() {
+			throw std::runtime_error("asmith::reflect : Reflection not defined for this type");
+		}
+	};
+
 	template<class T>
-	const reflection_class& reflect() {
-		throw std::runtime_error("asmith::reflect : Reflection not defined for this type");
+	inline const reflection_class& reflect() {
+		return reflection_specialisation<T>::reflect();
 	}
 
 	namespace implementation {
@@ -245,18 +252,22 @@ namespace asmith {
 	};
 
 	template<>
-	const reflection_class& reflect<void>() {
-		static const auto_reflection_class<void> REFLECTION;
-		return REFLECTION;
-	}
+	struct reflection_specialisation<void> {
+		static inline const reflection_class& reflect() {
+			static const auto_reflection_class<void> REFLECTION;
+			return REFLECTION;
+		}
+	};
 
 
 #define ASMITH_REFLECTION_PRIMATIVE_REFLECT(aName)\
 	template<>\
-	const reflection_class& reflect<aName>() {\
-		static const auto_reflection_class<aName> REFLECTION(#aName);\
-		return REFLECTION;\
-	}
+	struct reflection_specialisation<aName> {\
+		static inline const reflection_class& reflect() {\
+			static const auto_reflection_class<aName> REFLECTION(#aName);\
+			return REFLECTION;\
+		}\
+	};
 
 	ASMITH_REFLECTION_PRIMATIVE_REFLECT(bool)
 	ASMITH_REFLECTION_PRIMATIVE_REFLECT(char)
