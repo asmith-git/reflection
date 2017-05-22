@@ -287,6 +287,67 @@ namespace asmith {
 	};
 
 	template<class CLASS>
+	class const_reflection_class : public reflection_class {
+	public:
+		typedef const CLASS type;
+
+		// Inherited from reflection_class
+
+		const char* get_name() const override {
+			static const std::string NAME = std::string("const ") + reflect<CLASS>().get_name();
+			return NAME.c_str();
+		}
+
+		size_t get_size() const override {
+			return reflect<CLASS>().get_size();
+		}
+
+		size_t get_variable_count() const override {
+			return reflect<CLASS>().get_variable_count();
+		}
+
+		const reflection_variable& get_variable(size_t aIndex) const override {
+			return reflect<CLASS>().get_variable(aIndex);
+		}
+
+		size_t get_function_count() const override {
+			return reflect<CLASS>().get_function_count();
+		}
+
+		const reflection_function& get_function(size_t aIndex) const override {
+			return reflect<CLASS>().get_function(aIndex);
+		}
+
+		size_t get_constructor_count() const override {
+			return reflect<CLASS>().get_constructor_count();
+		}
+
+		const reflection_constructor& get_constructor(size_t aIndex) const override {
+			return reflect<CLASS>().get_constructor(aIndex);
+		}
+
+		const reflection_destructor& get_destructor() const override {
+			return reflect<CLASS>().get_destructor();
+		}
+
+		size_t get_parent_count() const override {
+			return reflect<CLASS>().get_parent_count();
+		}
+
+		const reflection_class& get_parent_class(size_t aIndex) const override {
+			return reflect<CLASS>().get_parent_class(aIndex);
+		}
+	};
+
+	template<class CLASS>
+	struct reflection_specialisation<const CLASS> {
+		static inline const reflection_class& reflect() throw() {
+			static const const_reflection_class<CLASS> REFLECTION;
+			return REFLECTION;
+		}
+	};
+
+	template<class CLASS>
 	class reference_reflection_class : public implementation::auto_reflection_class_ {
 	public:
 		typedef CLASS& type;
