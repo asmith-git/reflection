@@ -46,8 +46,8 @@ namespace asmith {
 
 	template<class T, typename ENABLE = void>
 	struct reflection_specialisation {
-		static const reflection_class& reflect() {
-			throw std::runtime_error("asmith::reflect : Reflection not defined for this type");
+		static inline const reflection_class& reflect() throw() {
+			return INVALID_REFLECTION_CLASS;
 		}
 	};
 
@@ -253,17 +253,70 @@ namespace asmith {
 
 	template<>
 	struct reflection_specialisation<void> {
-		static inline const reflection_class& reflect() {
+		static inline const reflection_class& reflect() throw() {
 			static const auto_reflection_class<void> REFLECTION;
 			return REFLECTION;
 		}
 	};
 
+	namespace implementation {
+		class invalid_reflection_class : public reflection_class {
+		public:
+			// Inherited from reflection_class
+
+			const char* get_name() const override {
+				return "undefined";
+			}
+
+			size_t get_size() const override {
+				return 0;
+			}
+
+			size_t get_variable_count() const override {
+				return 0;
+			}
+
+			const reflection_variable& get_variable(size_t aIndex) const override {
+				throw std::runtime_error("asmith::reflection_class::get_variable : Type is undefined");
+			}
+
+			size_t get_function_count() const override {
+				return 0;
+			}
+
+			const reflection_function& get_function(size_t aIndex) const override {
+				throw std::runtime_error("asmith::get_function::get_variable : Type is undefined");
+			}
+
+			size_t get_constructor_count() const override {
+				return 0;
+			}
+
+			const reflection_constructor& get_constructor(size_t aIndex) const override {
+				throw std::runtime_error("asmith::get_function::get_constructor : Type is undefined");
+			}
+
+			const reflection_destructor& get_destructor() const override {
+				throw std::runtime_error("asmith::get_function::get_destructor : Type is undefined");
+			}
+
+			size_t get_parent_count() const override {
+				return 0;
+			}
+
+			const reflection_class& get_parent_class(size_t aIndex) const override {
+				throw std::runtime_error("asmith::get_function::get_parent_class : Type is undefined");
+			}
+		};
+	}
+
+	static const implementation::invalid_reflection_class INVALID_REFLECTION_CLASS;
+
 
 #define ASMITH_REFLECTION_PRIMATIVE_REFLECT(aName)\
 	template<>\
 	struct reflection_specialisation<aName> {\
-		static inline const reflection_class& reflect() {\
+		static inline const reflection_class& reflect() throw() {\
 			static const auto_reflection_class<aName> REFLECTION(#aName);\
 			return REFLECTION;\
 		}\
