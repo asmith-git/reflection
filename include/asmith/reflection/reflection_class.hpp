@@ -281,7 +281,7 @@ namespace asmith {
 	template<class CLASS>
 	struct reflection_specialisation<CLASS*> {
 		static inline const reflection_class& reflect() throw() {
-			static const pointer_reflection_class<CLASS*> REFLECTION;
+			static const pointer_reflection_class<CLASS> REFLECTION;
 			return REFLECTION;
 		}
 	};
@@ -304,7 +304,7 @@ namespace asmith {
 	template<class CLASS>
 	struct reflection_specialisation<CLASS&> {
 		static inline const reflection_class& reflect() throw() {
-			static const reference_reflection_class<CLASS&> REFLECTION;
+			static const reference_reflection_class<CLASS> REFLECTION;
 			return REFLECTION;
 		}
 	};
