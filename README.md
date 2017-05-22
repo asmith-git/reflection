@@ -5,7 +5,7 @@
 
 ## Todo
 1. Further testing
-2. Support for pointers and references
+2. Fix issue where <const float*> and <float* const> have the same name
 3. Support for templated classes
 4. Support for constructors on abstract classes
 
