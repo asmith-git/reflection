@@ -139,6 +139,8 @@ namespace asmith {
 	template<class CLASS>
 	class auto_reflection_class : public implementation::auto_reflection_class_ {
 	public:
+		typedef CLASS type;
+
 		auto_reflection_class(const std::string& aName) :
 			auto_reflection_class_(aName, sizeof(CLASS))
 		{}
@@ -204,6 +206,8 @@ namespace asmith {
 	template<>
 	class auto_reflection_class<void> : public reflection_class {
 	public:
+		typedef void type;
+
 		// Inherited from reflection_class
 
 		const char* get_name() const override {
@@ -255,6 +259,52 @@ namespace asmith {
 	struct reflection_specialisation<void> {
 		static inline const reflection_class& reflect() throw() {
 			static const auto_reflection_class<void> REFLECTION;
+			return REFLECTION;
+		}
+	};
+
+	template<class CLASS>
+	class pointer_reflection_class : public implementation::auto_reflection_class_ {
+	public:
+		typedef CLASS* type;
+		typedef CLASS dereferenced_type;
+
+		pointer_reflection_class() :
+			auto_reflection_class_(std::string(reflect<CLASS>().get_name()) + "*", sizeof(CLASS*))
+		{}
+
+		const reflection_class& get_dereferenced_type() const {
+			return reflect<CLASS>();
+		}
+	};
+
+	template<class CLASS>
+	struct reflection_specialisation<CLASS*> {
+		static inline const reflection_class& reflect() throw() {
+			static const pointer_reflection_class<CLASS*> REFLECTION;
+			return REFLECTION;
+		}
+	};
+
+	template<class CLASS>
+	class reference_reflection_class : public implementation::auto_reflection_class_ {
+	public:
+		typedef CLASS& type;
+		typedef CLASS dereferenced_type;
+
+		reference_reflection_class() :
+			auto_reflection_class_(std::string(reflect<CLASS>().get_name()) + "&", sizeof(CLASS&))
+		{}
+
+		const reflection_class& get_dereferenced_type() const {
+			return reflect<CLASS>();
+		}
+	};
+
+	template<class CLASS>
+	struct reflection_specialisation<CLASS&> {
+		static inline const reflection_class& reflect() throw() {
+			static const reference_reflection_class<CLASS&> REFLECTION;
 			return REFLECTION;
 		}
 	};
