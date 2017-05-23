@@ -22,8 +22,6 @@ namespace asmith {
 	class reflection_class;
 	
 	class reflection_function {
-	protected:
-		virtual void call_(void*, void*, const void*) const = 0;
 	public:
 		virtual ~reflection_function() {}
 		
@@ -32,6 +30,8 @@ namespace asmith {
 		virtual const reflection_class& get_parameter(size_t) const = 0;
 		virtual const reflection_class& get_return() const = 0;
 		virtual size_t get_modifiers() const = 0;
+
+		virtual void call_unsafe(void*, void*, const void*) const = 0;
 
 		template<class R, class T>
 		R call(T& aObject) const {
@@ -226,11 +226,6 @@ namespace asmith {
 			else if(mConstPtr) ret = ((obj).*(mConstPtr))(*p1, *p2, *p3, *p4, *p5);
 			else if(mStaticPtr) ret = mStaticPtr(*p1, *p2, *p3, *p4, *p5);
 		}
-	protected:
-		// Inherited from reflection_function
-		void call_(void* aObject, void* aReturn, const void* aParams) const override {
-			call__<RETURN, PARAMS...>(aObject, aReturn, aParams);
-		}
 	public:
 		auto_reflection_function(const std::string& aName, const ptr_t aPtr, const size_t aModifiers) :
 			mName(aName),
@@ -283,6 +278,10 @@ namespace asmith {
 
 		size_t get_modifiers() const override {
 			return mModifiers;
+		}
+
+		void call_unsafe(void* aObject, void* aReturn, const void* aParams) const override {
+			call__<RETURN, PARAMS...>(aObject, aReturn, aParams);
 		}
 	};
 }
