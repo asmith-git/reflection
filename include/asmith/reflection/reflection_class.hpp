@@ -20,6 +20,8 @@
 #ifndef ASMITH_REFLECTION_CLASS_HPP
 #define ASMITH_REFLECTION_CLASS_HPP
 
+#include "reflection_modifier.hpp"
+
 namespace asmith {
 	
 	class reflection_variable;
@@ -465,28 +467,5 @@ namespace asmith {
 	}
 
 	static const implementation::invalid_reflection_class INVALID_REFLECTION_CLASS;
-
-
-#define ASMITH_REFLECTION_PRIMATIVE_REFLECT(aName)\
-	template<>\
-	struct reflection_specialisation<aName> {\
-		static inline const reflection_class& reflect() throw() {\
-			static const auto_reflection_class<aName> REFLECTION(#aName);\
-			return REFLECTION;\
-		}\
-	};
-
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(bool)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(char)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint8_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint16_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint32_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint64_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int8_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int16_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int32_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int64_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(float)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(double)
 }
 #endif
