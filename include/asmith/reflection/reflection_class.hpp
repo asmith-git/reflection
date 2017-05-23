@@ -90,7 +90,9 @@ namespace asmith {
 			auto_reflection_class_(const std::string& aName, const size_t aSize) :
 				mName(aName),
 				mSize(aSize)
-			{}
+			{
+				register_class(*this);
+			}
 
 			virtual ~auto_reflection_class_() {
 
@@ -216,6 +218,10 @@ namespace asmith {
 	public:
 		typedef void type;
 
+		auto_reflection_class() {
+			register_class(*this);
+		}
+
 		// Inherited from reflection_class
 
 		const char* get_name() const override {
@@ -298,6 +304,10 @@ namespace asmith {
 	class const_reflection_class : public reflection_class {
 	public:
 		typedef const CLASS type;
+
+		const_reflection_class() {
+			register_class(*this);
+		}
 
 		// Inherited from reflection_class
 
