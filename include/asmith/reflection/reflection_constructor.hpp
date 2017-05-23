@@ -19,8 +19,6 @@ namespace asmith {
 	class reflection_class;
 	
 	class reflection_constructor {
-	protected:
-		virtual void call_(void*, const void*) const = 0;
 	public:
 		virtual ~reflection_constructor() {}
 		
@@ -28,33 +26,35 @@ namespace asmith {
 		virtual const reflection_class& get_parameter(size_t) const = 0;
 		virtual size_t get_modifiers() const = 0;
 
+		virtual void call_unsafe(void*, const void*) const = 0;
+
 		void call(void* aObject) const {
-			call_(aObject, nullptr);
+			call_unsafe(aObject, nullptr);
 		}
 
 		template<class P1>
 		void call(void* aObject, P1 p1) const {
-			call_(&aObject, &p1);
+			call_unsafe(&aObject, &p1);
 		}
 
 		template<class P1, class P2>
 		void call(void* aObject, P1 p1, P2 p2) const {
-			call_(aObject, &p1);
+			call_unsafe(aObject, &p1);
 		}
 
 		template<class P1, class P2, class P3>
 		void call(void* aObject, P1 p1, P2 p2, P3 p3) const {
-			call_(aObject, &p1);
+			call_unsafe(aObject, &p1);
 		}
 
 		template<class P1, class P2, class P3, class P4>
 		void call(void* aObject, P1 p1, P2 p2, P3 p3, P4 p4) const {
-			call_(aObject, &p1);
+			call_unsafe(aObject, &p1);
 		}
 
 		template<class P1, class P2, class P3, class P4, class P5>
 		void call(void* aObject, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const {
-			call_(&aObject, &p1);
+			call_unsafe(&aObject, &p1);
 		}
 	};
 
@@ -107,12 +107,6 @@ namespace asmith {
 			const P5* const p3 = reinterpret_cast<const P5*>(reinterpret_cast<const uint8_t*>(p4) + sizeof(P4));
 			new(aObject) T(*p1, *p2, *p3, *p4, *p5);
 		}
-	protected:
-		// Inherited from reflection_constructor
-
-		void call_(void* aObject, const void* aParams) const override {
-			call__<CLASS, PARAMS...>(aObject, aParams);
-		}
 	public:
 		auto_reflection_constructor(const size_t aModifiers) :
 			mModifiers(aModifiers)
@@ -138,6 +132,10 @@ namespace asmith {
 
 		size_t get_modifiers() const override {
 			return mModifiers;
+		}
+
+		void call_unsafe(void* aObject, const void* aParams) const override {
+			call__<CLASS, PARAMS...>(aObject, aParams);
 		}
 	};
 }
