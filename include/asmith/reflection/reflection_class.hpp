@@ -49,6 +49,8 @@ namespace asmith {
 		virtual size_t get_parent_count() const = 0;
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
 
+		virtual const reflection_constructor& get_copy_constructor() const;
+		virtual const reflection_constructor& get_move_constructor() const;
 		virtual const reflection_constructor& get_trivial_constructor() const;
 		virtual const reflection_function& get_function(const char* aName) const;
 		virtual const reflection_variable& get_variable(const char* aName) const;

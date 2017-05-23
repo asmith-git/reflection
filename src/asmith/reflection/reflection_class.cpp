@@ -41,6 +41,26 @@ namespace asmith {
 		return *tmp;
 	}
 
+	const reflection_constructor& reflection_class::get_copy_constructor() const {
+		const std::string name = std::string(get_name()) + "&&";
+		const size_t s = get_constructor_count();
+		for (size_t i = 0; i < s; ++i) {
+			const reflection_constructor& con = get_constructor(i);
+			if (con.get_parameter_count() == 1 && strcmp(name.c_str(), con.get_parameter(0).get_name()) == 0) return con;
+		}
+		throw std::runtime_error("asmith::reflection_class::get_trivial_constructor : Class does not have a trivial constructor");
+	}
+
+	const reflection_constructor& reflection_class::get_move_constructor() const {
+		const std::string name = "const " + std::string(get_name()) + "&";
+		const size_t s = get_constructor_count();
+		for(size_t i = 0; i < s; ++i) {
+			const reflection_constructor& con = get_constructor(i);
+			if(con.get_parameter_count() == 1 && strcmp(name.c_str(), con.get_parameter(0).get_name()) == 0) return con;
+		}
+		throw std::runtime_error("asmith::reflection_class::get_trivial_constructor : Class does not have a trivial constructor");
+	}
+
 	const reflection_constructor& reflection_class::get_trivial_constructor() const {
 		const size_t s = get_constructor_count();
 		for(size_t i = 0; i < s; ++i) {
