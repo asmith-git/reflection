@@ -37,6 +37,8 @@ namespace asmith {
 
 		reflection_instance call_unsafe(const char*, const void*);
 		const reflection_class& get_class() const;
+		void* as_unsafe();
+		const void* as_unsafe() const;
 
 		template<class ...PARAMS>
 		reflection_instance(const reflection_class& aClass, PARAMS... aParams) :

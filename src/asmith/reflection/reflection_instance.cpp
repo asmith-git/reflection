@@ -48,7 +48,6 @@ namespace asmith {
 		}
 	}
 
-
 	const reflection_class& reflection_instance::get_class() const {
 		return *mClass;
 	}
@@ -58,5 +57,13 @@ namespace asmith {
 		reflection_instance obj(fun.get_return());
 		fun.call_unsafe(mData, obj.mData, aParams);
 		return obj;
+	}
+
+	void* reflection_instance::as_unsafe() {
+		return mData;
+	}
+
+	const void* reflection_instance::as_unsafe() const {
+		return mData;
 	}
 }
