@@ -70,6 +70,18 @@ namespace asmith {
 		void set_variable(const char* aName, T aValue) {
 			return mClass->get_variable(aName).set<T>(aValue);
 		}
+
+		template<class T>
+		T& as() {
+			if(strcmp(mClass->get_name(), reflect<T>().get_name()) != 0) throw std::runtime_error("asmith::reflection_instance::as : Type mismatch");
+			return *reinterpret_cast<T*>(mData);
+		}
+
+		template<class T>
+		const T& as() const {
+			if(strcmp(mClass->get_name(), reflect<T>().get_name()) != 0) throw std::runtime_error("asmith::reflection_instance::as : Type mismatch");
+			return *reinterpret_cast<const T*>(mData);
+		}
 	};
 }
 
