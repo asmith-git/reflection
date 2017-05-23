@@ -27,20 +27,20 @@ namespace asmith {
 		virtual const char* get_name() const = 0;
 		virtual uint32_t get_modifiers() const = 0;
 
-		virtual void set_(void*, const void*) const = 0;
-		virtual void get_(const void*, void*) const = 0;
+		virtual void set_unsafe(void*, const void*) const = 0;
+		virtual void get_unsafe(const void*, void*) const = 0;
 
 		template<class CLASS, class T>
 		void set(CLASS& aObject, T aValue) const {
 			//! \todo Check type
-			set_(&aObject, &aValue);
+			set_unsafe(&aObject, &aValue);
 		}
 
 		template<class CLASS, class T>
 		T get(const CLASS& aObject, T aValue) const {
 			//! \todo Check type
 			T tmp;
-			get_(&aObject, &tmp);
+			get_unsafe(&aObject, &tmp);
 			return tmp;
 		}
 	};
@@ -56,13 +56,13 @@ namespace asmith {
 	protected:
 		// Inherited from reflection_variable
 
-		void set_(void* aObject, const void* aValue) const override {
+		void set_unsafe(void* aObject, const void* aValue) const override {
 			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
 			const T& val = *reinterpret_cast<const T*>(aValue);
 			((obj).*(mPointer)) = val;
 		}
 
-		void get_(const void* aObject, void* aValue) const override {
+		void get_unsafe(const void* aObject, void* aValue) const override {
 			const CLASS& obj = *reinterpret_cast<const CLASS*>(aObject);
 			T& val = *reinterpret_cast<T*>(aValue);
 			val = ((obj).*(mPointer));
