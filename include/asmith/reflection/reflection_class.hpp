@@ -42,6 +42,40 @@ namespace asmith {
 		virtual const reflection_destructor& get_destructor() const = 0;
 		virtual size_t get_parent_count() const = 0;
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
+
+		template<class C = void>
+		const reflection_constructor& get_trivial_constructor() const {
+			const size_t s = get_constructor_count();
+			for(size_t i = 0; i < s; ++i) {
+				const reflection_constructor& con = get_constructor(i);
+				if(con.get_parameter_count() == 0) return con;
+			}
+			throw std::runtime_error("asmith::reflection_class::get_trivial_constructor : Class does not have a trivial constructor");
+		}
+
+		template<class C = void>
+		const reflection_function& get_function(const char* aName) const {
+			//! \todo Handle overloaded functions
+
+			const size_t s = get_function_count();
+			for (size_t i = 0; i < s; ++i) {
+				const reflection_function& fun = get_function(i);
+				if(strcmp(fun.get_name(), aName) == 0) return fun;
+			}
+			throw std::runtime_error("asmith::reflection_class::get_function : Class does not have function with name");
+		}
+
+		template<class C = void>
+		const reflection_variable& get_variable(const char* aName) const {
+			//! \todo Handle overloaded functions
+
+			const size_t s = get_variable_count();
+			for (size_t i = 0; i < s; ++i) {
+				const reflection_variable& var = get_variable(i);
+				if (strcmp(var.get_name(), aName) == 0) return var;
+			}
+			throw std::runtime_error("asmith::reflection_class::get_variable : Class does not have variable with name");
+		}
 	};
 
 	template<class T, typename ENABLE = void>

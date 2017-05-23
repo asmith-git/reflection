@@ -20,15 +20,15 @@ namespace asmith {
 	class reflection_class;
 
 	class reflection_variable {
-	protected:
-		virtual void set_(void*, const void*) const = 0;
-		virtual void get_(const void*, void*) const = 0;
 	public:
 		virtual ~reflection_variable() {}
 		
 		virtual const reflection_class& get_class() const = 0;
 		virtual const char* get_name() const = 0;
 		virtual uint32_t get_modifiers() const = 0;
+
+		virtual void set_(void*, const void*) const = 0;
+		virtual void get_(const void*, void*) const = 0;
 
 		template<class CLASS, class T>
 		void set(CLASS& aObject, T aValue) const {
