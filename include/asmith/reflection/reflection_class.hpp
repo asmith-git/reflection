@@ -28,7 +28,11 @@ namespace asmith {
 	class reflection_destructor;
 	
 	class reflection_class {
+	protected:
+		static void register_class(const reflection_class&) throw();
 	public:
+		static const reflection_class& get_class_by_name(const char*);
+
 		virtual ~reflection_class() {}
 		
 		virtual const char* get_name() const = 0;

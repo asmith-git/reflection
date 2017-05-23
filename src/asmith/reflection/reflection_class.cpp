@@ -12,12 +12,34 @@
 //	limitations under the License.
 
 #include "asmith/reflection/reflection_class.hpp"
+#include <map>
+#include <mutex>
 #include "asmith/reflection/reflection_constructor.hpp"
 #include "asmith/reflection/reflection_function.hpp"
 #include "asmith/reflection/reflection_variable.hpp"
+
 	
 namespace asmith {
+	std::map<std::string, const reflection_class*> REFLECTION_CLASS_MAP;
+	std::mutex REFLECTION_CLASS_MAP_LOCK;
+
 	// reflection_class
+
+	void reflection_class::register_class(const reflection_class& aClass) throw() {
+		REFLECTION_CLASS_MAP_LOCK.lock();
+			REFLECTION_CLASS_MAP.emplace(aClass.get_name(), &aClass);
+		REFLECTION_CLASS_MAP_LOCK.unlock();
+	}
+
+	const reflection_class& reflection_class::get_class_by_name(const char* aName) {
+		const reflection_class* tmp = nullptr;
+		REFLECTION_CLASS_MAP_LOCK.lock();
+			const auto i = REFLECTION_CLASS_MAP.find(aName);
+			if(i != REFLECTION_CLASS_MAP.end()) tmp = i->second;
+		REFLECTION_CLASS_MAP_LOCK.unlock();
+		if(tmp == nullptr) return INVALID_REFLECTION_CLASS;
+		return *tmp;
+	}
 
 	const reflection_constructor& reflection_class::get_trivial_constructor() const {
 		const size_t s = get_constructor_count();
