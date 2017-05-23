@@ -370,6 +370,31 @@ namespace asmith {
 		}
 	};
 
+
+
+	template<class CLASS, size_t S>
+	class fixed_array_reflection_class : public implementation::auto_reflection_class_ {
+	public:
+		typedef CLASS type[S];
+		typedef CLASS dereferenced_type;
+
+		fixed_array_reflection_class() :
+			auto_reflection_class_(std::string(reflect<CLASS>().get_name()) + "[" + std::to_string(S) + "]", sizeof(CLASS&))
+		{}
+
+		const reflection_class& get_dereferenced_type() const {
+			return reflect<CLASS>();
+		}
+	};
+
+	template<class CLASS, size_t S>
+	struct reflection_specialisation<CLASS[S]> {
+		static inline const reflection_class& reflect() throw() {
+			static const fixed_array_reflection_class<CLASS, S> REFLECTION;
+			return REFLECTION;
+		}
+	};
+
 	namespace implementation {
 		class invalid_reflection_class : public reflection_class {
 		public:
