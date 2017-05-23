@@ -23,6 +23,7 @@
 #include "reflection_modifier.hpp"
 #include "template_helper.hpp"
 #include "primatives.hpp"
+#include "reflection_instance.hpp"
 
 namespace asmith {
 
