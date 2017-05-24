@@ -43,7 +43,7 @@ namespace asmith {
 		}
 
 		template<class R, class T, class P1>
-		R call(T& aObject, P1 p1) const {
+		R call(T& aObject, reflection_parameter_map<P1> p1) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(&aObject, &tmp, &p1);
@@ -51,7 +51,7 @@ namespace asmith {
 		}
 
 		template<class R, class T, class P1, class P2>
-		R call(T& aObject, P1 p1, P2 p2) const {
+		R call(T& aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(&aObject, &tmp, &p1);
@@ -59,7 +59,7 @@ namespace asmith {
 		}
 
 		template<class R, class T, class P1, class P2, class P3>
-		R call(T& aObject, P1 p1, P2 p2, P3 p3) const {
+		R call(T& aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(&aObject, &tmp, &p1);
@@ -67,7 +67,7 @@ namespace asmith {
 		}
 
 		template<class R, class T, class P1, class P2, class P3, class P4>
-		R call(T& aObject, P1 p1, P2 p2, P3 p3, P4 p4) const {
+		R call(T& aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3, reflection_parameter_map<P4> p4) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(&aObject, &tmp, &p1);
@@ -75,7 +75,7 @@ namespace asmith {
 		}
 
 		template<class R, class T, class P1, class P2, class P3, class P4, class P5>
-		R call(T& aObject, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const {
+		R call(T& aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3, reflection_parameter_map<P4> p4, reflection_parameter_map<P5> p5) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(&aObject, &tmp, &p1);
@@ -90,7 +90,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1>
-		R call_static(P1 p1) const {
+		R call_static(reflection_parameter_map<P1> p1) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(nullptr, &tmp, &p1);
@@ -98,7 +98,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2>
-		R call_static(P1 p1, P2 p2) const {
+		R call_static(reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(nullptr, &tmp, &p1);
@@ -106,7 +106,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2, class P3>
-		R call_static(P1 p1, P2 p2, P3 p3) const {
+		R call_static(reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(nullptr, &tmp, &p1);
@@ -114,7 +114,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2, class P3, class P4>
-		R call_static(P1 p1, P2 p2, P3 p3, P4 p4) const {
+		R call_static(reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3, reflection_parameter_map<P4> p4) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(nullptr, &tmp, &p1);
@@ -122,7 +122,7 @@ namespace asmith {
 		}
 
 		template<class R, class P1, class P2, class P3, class P4, class P5>
-		R call_static(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const {
+		R call_static(reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3, reflection_parameter_map<P4> p4, reflection_parameter_map<P5> p5) const {
 			//! \todo Check return and parameter types
 			R tmp;
 			call_unsafe(nullptr, &tmp, &p1);

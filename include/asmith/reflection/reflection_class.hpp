@@ -446,6 +446,23 @@ namespace asmith {
 		return implementation::get_parameter_<T>::get_parameter(aParam);
 	}
 
+
+
+	namespace implementation {
+		template<class T>
+		struct reflection_parameter_map_ {
+			typedef T type;
+		};
+
+		template<class T>
+		struct reflection_parameter_map_<T&> {
+			typedef std::reference_wrapper<T> type;
+		};
+	}
+
+	template<class T>
+	using reflection_parameter_map = typename implementation::reflection_parameter_map_<T>::type;
+
 	template<class CLASS, size_t S>
 	class fixed_array_reflection_class : public implementation::auto_reflection_class_ {
 	public:

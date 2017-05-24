@@ -33,27 +33,27 @@ namespace asmith {
 		}
 
 		template<class P1>
-		void call(void* aObject, P1 p1) const {
+		void call(void* aObject, reflection_parameter_map<P1> p1) const {
 			call_unsafe(&aObject, &p1);
 		}
 
 		template<class P1, class P2>
-		void call(void* aObject, P1 p1, P2 p2) const {
+		void call(void* aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2) const {
 			call_unsafe(aObject, &p1);
 		}
 
 		template<class P1, class P2, class P3>
-		void call(void* aObject, P1 p1, P2 p2, P3 p3) const {
+		void call(void* aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3) const {
 			call_unsafe(aObject, &p1);
 		}
 
 		template<class P1, class P2, class P3, class P4>
-		void call(void* aObject, P1 p1, P2 p2, P3 p3, P4 p4) const {
+		void call(void* aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3, reflection_parameter_map<P4> p4) const {
 			call_unsafe(aObject, &p1);
 		}
 
 		template<class P1, class P2, class P3, class P4, class P5>
-		void call(void* aObject, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const {
+		void call(void* aObject, reflection_parameter_map<P1> p1, reflection_parameter_map<P2> p2, reflection_parameter_map<P3> p3, reflection_parameter_map<P4> p4, reflection_parameter_map<P5> p5) const {
 			call_unsafe(&aObject, &p1);
 		}
 	};
