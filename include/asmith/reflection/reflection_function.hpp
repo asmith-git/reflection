@@ -14,6 +14,7 @@
 #ifndef ASMITH_REFLECTION_FUNCTION_HPP
 #define ASMITH_REFLECTION_FUNCTION_HPP
 
+#include <functional>
 #include <string>
 #include "template_helper.hpp"
 
@@ -136,166 +137,127 @@ namespace asmith {
 		typedef RETURN(CLASS::*const_ptr_t)(PARAMS...) const;
 		typedef RETURN(*static_ptr_t)(PARAMS...);
 	private:
+		typedef std::function<void(CLASS*, RETURN*, PARAMS...)> function_t;
 		const std::string mName;
-		const ptr_t mPtr;
-		const const_ptr_t mConstPtr;
-		const static_ptr_t mStaticPtr;
+		const function_t mFunction;
 		const size_t mModifiers;
 
+
 		template<class R>
-		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
-			if(mPtr) ((obj).*(mPtr))();
-			else if(mConstPtr) ((obj).*(mConstPtr))();
-			else if(mStaticPtr) mStaticPtr();
+		void call__(void* aObject, void* aReturn, void* aParams) const {
+			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
+			R* const ret = reinterpret_cast<RETURN*>(aReturn);
+			mFunction(obj, ret);
 		}
 
 		template<class R, class P1>
-		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+		void call__(void* aObject, void* aReturn, void* aParams) const {
+			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
+			R* const ret = reinterpret_cast<RETURN*>(aReturn);
 			P1 p1 = asmith::get_parameter<P1>(aParams);
-			if(mPtr) ((obj).*(mPtr))(p1);
-			else if(mConstPtr) ((obj).*(mConstPtr))(p1);
-			else if(mStaticPtr) mStaticPtr(p1);
+			mFunction(obj, ret, p1);
 		}
 
 		template<class R, class P1, class P2>
-		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+		void call__(void* aObject, void* aReturn, void* aParams) const {
+			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
+			R* const ret = reinterpret_cast<RETURN*>(aReturn);
 			P1 p1 = asmith::get_parameter<P1>(aParams);
 			P2 p2 = asmith::get_parameter<P2>(aParams);
-			if(mPtr) ((obj).*(mPtr))(p1, p2);
-			else if(mConstPtr) ((obj).*(mConstPtr))(p1, p2);
-			else if(mStaticPtr) mStaticPtr(p1, p2);
+			mFunction(obj, ret, p1, p2);
 		}
 
 		template<class R, class P1, class P2, class P3>
-		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+		void call__(void* aObject, void* aReturn, void* aParams) const {
+			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
+			R* const ret = reinterpret_cast<RETURN*>(aReturn);
 			P1 p1 = asmith::get_parameter<P1>(aParams);
 			P2 p2 = asmith::get_parameter<P2>(aParams);
 			P3 p3 = asmith::get_parameter<P3>(aParams);
-			if(mPtr) ((obj).*(mPtr))(p1, p2, p3);
-			else if(mConstPtr) ((obj).*(mConstPtr))(p1, p2, p3);
-			else if(mStaticPtr) mStaticPtr(p1, p2, p3);
+			mFunction(obj, ret, p1, p2, p3);
 		}
 
 		template<class R, class P1, class P2, class P3, class P4>
-		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+		void call__(void* aObject, void* aReturn, void* aParams) const {
+			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
+			R* const ret = reinterpret_cast<RETURN*>(aReturn);
 			P1 p1 = asmith::get_parameter<P1>(aParams);
 			P2 p2 = asmith::get_parameter<P2>(aParams);
 			P3 p3 = asmith::get_parameter<P3>(aParams);
 			P4 p4 = asmith::get_parameter<P4>(aParams);
-			if(mPtr) ((obj).*(mPtr))(p1, p2, p3, p4);
-			else if(mConstPtr) ((obj).*(mConstPtr))(p1, p2, p3, p4);
-			else if(mStaticPtr) mStaticPtr(p1, p2, p3, p4);
+			mFunction(obj, ret, p1, p2, p3, p4);
 		}
 
 		template<class R, class P1, class P2, class P3, class P4, class P5>
-		typename std::enable_if<std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
+		void call__(void* aObject, void* aReturn, void* aParams) const {
+			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
+			R* const ret = reinterpret_cast<RETURN*>(aReturn);
 			P1 p1 = asmith::get_parameter<P1>(aParams);
 			P2 p2 = asmith::get_parameter<P2>(aParams);
 			P3 p3 = asmith::get_parameter<P3>(aParams);
 			P4 p4 = asmith::get_parameter<P4>(aParams);
 			P5 p5 = asmith::get_parameter<P5>(aParams);
-			if(mPtr) ((obj).*(mPtr))(p1, p2, p3, p4, p5);
-			else if(mConstPtr) ((obj).*(mConstPtr))(p1, p2, p3, p4, p5);
-			else if(mStaticPtr) mStaticPtr(p1, p2, p3, p4, p5);
+			mFunction(obj, ret, p1, p2, p3, p4, p5);
 		}
 
 		template<class R>
-		typename std::enable_if<! std::is_same<R,void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
-			R& ret = *reinterpret_cast<RETURN*>(aReturn);
-			if(mPtr) ret = ((obj).*(mPtr))();
-			else if(mConstPtr) ret = ((obj).*(mConstPtr))();
-			else if(mStaticPtr) ret = mStaticPtr();
+		static typename std::enable_if<std::is_same<R, void>::value, function_t>::type wrap_function(const ptr_t aPtr) {
+			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
+				((aObject)->*(aPtr))(aParams...);
+			};
 		}
 
-		template<class R, class P1>
-		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
-			R& ret = *reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			if (mPtr) ret = ((obj).*(mPtr))(p1);
-			else if(mConstPtr) ret = ((obj).*(mConstPtr))(p1);
-			else if(mStaticPtr) ret = mStaticPtr(p1);
+		template<class R>
+		static typename std::enable_if<std::is_same<R, void>::value, function_t>::type wrap_function(const const_ptr_t aPtr) {
+			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
+				((aObject)->*(aPtr))(aParams...);
+			};
 		}
 
-		template<class R, class P1, class P2>
-		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
-			R& ret = *reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
-			if(mPtr) ret = ((obj).*(mPtr))(p1, p2);
-			else if(mConstPtr) ret = ((obj).*(mConstPtr))(p1, p2);
-			else if(mStaticPtr) ret = mStaticPtr(p1, p2);
+		template<class R>
+		static typename std::enable_if<std::is_same<R, void>::value, function_t>::type wrap_function(const static_ptr_t aPtr) {
+			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
+				aPtr(aParams...);
+			};
 		}
 
-		template<class R, class P1, class P2, class P3>
-		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
-			R& ret = *reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
-			P3 p3 = asmith::get_parameter<P3>(aParams);
-			if(mPtr) ret = ((obj).*(mPtr))(p1, p2, p3);
-			else if(mConstPtr) ret = ((obj).*(mConstPtr))(p1, p2, p3);
-			else if(mStaticPtr) ret = mStaticPtr(p1, p2, p3);
+		template<class R>
+		static typename std::enable_if<! std::is_same<R, void>::value, function_t>::type wrap_function(const ptr_t aPtr) {
+			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
+				*aReturn = ((aObject)->*(aPtr))(aParams...);
+			};
 		}
 
-		template<class R, class P1, class P2, class P3, class P4>
-		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
-			R& ret = *reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
-			P3 p3 = asmith::get_parameter<P3>(aParams);
-			P4 p4 = asmith::get_parameter<P4>(aParams);
-			if(mPtr) ret = ((obj).*(mPtr))(p1, p2, p3, p4);
-			else if(mConstPtr) ret = ((obj).*(mConstPtr))(p1, p2, p3, p4);
-			else if(mStaticPtr) ret = mStaticPtr(p1, p2, p3, p4);
+		template<class R>
+		static typename std::enable_if<! std::is_same<R, void>::value, function_t>::type wrap_function(const const_ptr_t aPtr) {
+			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
+				*aReturn = ((aObject)->*(aPtr))(aParams...);
+			};
 		}
 
-		template<class R, class P1, class P2, class P3, class P4, class P5>
-		typename std::enable_if<!std::is_same<R, void>::value, void>::type call__(void* aObject, void* aReturn, void* aParams) const {
-			CLASS& obj = *reinterpret_cast<CLASS*>(aObject);
-			R& ret = *reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
-			P3 p3 = asmith::get_parameter<P3>(aParams);
-			P4 p4 = asmith::get_parameter<P4>(aParams);
-			P5 p5 = asmith::get_parameter<P5>(aParams);
-			if(mPtr) ret = ((obj).*(mPtr))(p1, p2, p3, p4, p5);
-			else if(mConstPtr) ret = ((obj).*(mConstPtr))(p1, p2, p3, p4, p5);
-			else if(mStaticPtr) ret = mStaticPtr(p1, p2, p3, p4, p5);
+		template<class R>
+		static typename std::enable_if<! std::is_same<R, void>::value, function_t>::type wrap_function(const static_ptr_t aPtr) {
+			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
+				*aReturn = aPtr(aParams...);
+			};
 		}
 	public:
 		auto_reflection_function(const std::string& aName, const ptr_t aPtr, const size_t aModifiers) :
 			mName(aName),
 			mModifiers(aModifiers),
-			mPtr(aPtr),
-			mConstPtr(nullptr),
-			mStaticPtr(nullptr)
+			mFunction(wrap_function<RETURN>(aPtr))
 		{}
 
 		auto_reflection_function(const std::string& aName, const const_ptr_t aPtr, const size_t aModifiers) :
 			mName(aName),
 			mModifiers(aModifiers),
-			mPtr(nullptr),
-			mConstPtr(aPtr),
-			mStaticPtr(nullptr)
+			mFunction(wrap_function<RETURN>(aPtr))
 		{}
 
 		auto_reflection_function(const std::string& aName, const static_ptr_t aPtr, const size_t aModifiers) :
 			mName(aName),
 			mModifiers(aModifiers),
-			mPtr(nullptr),
-			mConstPtr(nullptr),
-			mStaticPtr(aPtr)
+			mFunction(wrap_function<RETURN>(aPtr))
 		{}
 
 		// Inherited from reflection_function
