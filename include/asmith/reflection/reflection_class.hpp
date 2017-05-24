@@ -392,7 +392,34 @@ namespace asmith {
 		}
 	};
 
+	namespace implementation{
+		template<size_t I, class... TYPES>
+		struct reflect_type_at_ {
+			static const reflection_class& reflect_type_at(size_t aIndex) {
+				switch(aIndex) {
+					case 0: return reflect<type_at_index<0, TYPES...>>();
+					case 1: return reflect<type_at_index<1, TYPES...>>();
+					case 2: return reflect<type_at_index<2, TYPES...>>();
+					case 3: return reflect<type_at_index<3, TYPES...>>();
+					case 4: return reflect<type_at_index<4, TYPES...>>();
+					case 5: return reflect<type_at_index<5, TYPES...>>();
+					default: throw std::runtime_error("asmith::reflect_type_at : Index out of bounds");
+				}
+			}
+		};
 
+		template<class... TYPES>
+		struct reflect_type_at_<0, TYPES...> {
+			static const reflection_class& reflect_type_at(size_t aIndex) {
+				throw std::runtime_error("asmith::reflect_type_at : Index out of bounds");
+			}
+		};
+	}
+
+	template<class ...TYPES>
+	const reflection_class& reflect_type_at(size_t aIndex) {
+		return implementation::reflect_type_at_<sizeof...(TYPES), TYPES...>::reflect_type_at(aIndex);
+	}
 
 	template<class CLASS, size_t S>
 	class fixed_array_reflection_class : public implementation::auto_reflection_class_ {

@@ -37,7 +37,7 @@ namespace asmith {
 		R call(T& aObject) const {
 			//! \todo Check return type
 			R tmp;
-			call_(&aObject, &tmp, nullptr);
+			call_unsafe(&aObject, &tmp, nullptr);
 			return tmp;
 		}
 
@@ -45,7 +45,7 @@ namespace asmith {
 		R call(T& aObject, P1 p1) const {
 			//! \todo Check return and parameter types
 			R tmp;
-			call_(&aObject, &tmp, &p1);
+			call_unsafe(&aObject, &tmp, &p1);
 			return tmp;
 		}
 
@@ -53,7 +53,7 @@ namespace asmith {
 		R call(T& aObject, P1 p1, P2 p2) const {
 			//! \todo Check return and parameter types
 			R tmp;
-			call_(&aObject, &tmp, &p1);
+			call_unsafe(&aObject, &tmp, &p1);
 			return tmp;
 		}
 
@@ -61,7 +61,7 @@ namespace asmith {
 		R call(T& aObject, P1 p1, P2 p2, P3 p3) const {
 			//! \todo Check return and parameter types
 			R tmp;
-			call_(&aObject, &tmp, &p1);
+			call_unsafe(&aObject, &tmp, &p1);
 			return tmp;
 		}
 
@@ -69,7 +69,7 @@ namespace asmith {
 		R call(T& aObject, P1 p1, P2 p2, P3 p3, P4 p4) const {
 			//! \todo Check return and parameter types
 			R tmp;
-			call_(&aObject, &tmp, &p1);
+			call_unsafe(&aObject, &tmp, &p1);
 			return tmp;
 		}
 
@@ -77,7 +77,54 @@ namespace asmith {
 		R call(T& aObject, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const {
 			//! \todo Check return and parameter types
 			R tmp;
-			call_(&aObject, &tmp, &p1);
+			call_unsafe(&aObject, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class R>
+		R call_static() const {
+			R tmp;
+			call_unsafe(nullptr, &tmp, nullptr);
+			return tmp;
+		}
+
+		template<class R, class P1>
+		R call_static(P1 p1) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_unsafe(nullptr, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class R, class P1, class P2>
+		R call_static(P1 p1, P2 p2) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_unsafe(nullptr, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class R, class P1, class P2, class P3>
+		R call_static(P1 p1, P2 p2, P3 p3) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_unsafe(nullptr, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class R, class P1, class P2, class P3, class P4>
+		R call_static(P1 p1, P2 p2, P3 p3, P4 p4) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_unsafe(nullptr, &tmp, &p1);
+			return tmp;
+		}
+
+		template<class R, class P1, class P2, class P3, class P4, class P5>
+		R call_static(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const {
+			//! \todo Check return and parameter types
+			R tmp;
+			call_unsafe(nullptr, &tmp, &p1);
 			return tmp;
 		}
 	};
@@ -261,15 +308,7 @@ namespace asmith {
 		}
 
 		const reflection_class& get_parameter(size_t aIndex) const override {
-			switch(aIndex) {
-			case 0: return reflect<type_at_index<0, PARAMS...>::type>();
-			case 1: return reflect<type_at_index<1, PARAMS...>::type>();
-			case 2: return reflect<type_at_index<2, PARAMS...>::type>();
-			case 3: return reflect<type_at_index<3, PARAMS...>::type>();
-			case 4: return reflect<type_at_index<4, PARAMS...>::type>();
-			case 5: return reflect<type_at_index<5, PARAMS...>::type>();
-			default : throw std::runtime_error("asmith::reflection_function::get_parameter : Index out of bounds");
-			}
+			return reflect_type_at<PARAMS...>(aIndex);
 		}
 
 		const reflection_class& get_return() const override {
