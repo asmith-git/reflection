@@ -52,7 +52,7 @@ namespace asmith {
 		return *mClass;
 	}
 
-	reflection_instance reflection_instance::call_unsafe(const char* aName, const void* aParams) {
+	reflection_instance reflection_instance::call_unsafe(const char* aName, void* aParams) {
 		const reflection_function& fun = mClass->get_function(aName);
 		reflection_instance obj(fun.get_return());
 		fun.call_unsafe(mData, obj.mData, aParams);

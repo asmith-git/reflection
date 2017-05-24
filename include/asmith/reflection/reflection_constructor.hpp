@@ -26,7 +26,7 @@ namespace asmith {
 		virtual const reflection_class& get_parameter(size_t) const = 0;
 		virtual size_t get_modifiers() const = 0;
 
-		virtual void call_unsafe(void*, const void*) const = 0;
+		virtual void call_unsafe(void*, void*) const = 0;
 
 		void call(void* aObject) const {
 			call_unsafe(aObject, nullptr);
@@ -64,48 +64,48 @@ namespace asmith {
 		const size_t mModifiers;
 
 		template<class T>
-		void call__(void* aObject, const void* aParams) const {
+		void call__(void* aObject, void* aParams) const {
 			new(aObject) T();
 		}
 
 		template<class T, class P1 >
-		void call__(void* aObject, const void* aParams) const {
-			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
-			new(aObject) T(*p1);
+		void call__(void* aObject, void* aParams) const {
+			P1 p1 = asmith::get_parameter<P1>(aParams);
+			new(aObject) T(p1);
 		}
 
 		template<class T, class P1, class P2>
-		void call__(void* aObject, const void* aParams) const {
-			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
-			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
-			new(aObject) T(*p1, *p2);
+		void call__(void* aObject, void* aParams) const {
+			P1 p1 = asmith::get_parameter<P1>(aParams);
+			P2 p2 = asmith::get_parameter<P2>(aParams);
+			new(aObject) T(p1, p2);
 		}
 
 		template<class T, class P1, class P2, class P3>
-		void call__(void* aObject, const void* aParams) const {
-			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
-			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
-			const P3* const p3 = reinterpret_cast<const P3*>(reinterpret_cast<const uint8_t*>(p2) + sizeof(P2));
-			new(aObject) T(*p1, *p2, *p3);
+		void call__(void* aObject, void* aParams) const {
+			P1 p1 = asmith::get_parameter<P1>(aParams);
+			P2 p2 = asmith::get_parameter<P2>(aParams);
+			P3 p3 = asmith::get_parameter<P3>(aParams);
+			new(aObject) T(p1, p2, p3);
 		}
 
 		template<class T, class P1, class P2, class P3, class P4>
-		void call__(void* aObject, const void* aParams) const {
-			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
-			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
-			const P3* const p3 = reinterpret_cast<const P3*>(reinterpret_cast<const uint8_t*>(p2) + sizeof(P2));
-			const P4* const p3 = reinterpret_cast<const P4*>(reinterpret_cast<const uint8_t*>(p3) + sizeof(P3));
-			new(aObject) T(*p1, *p2, *p3, *p4);
+		void call__(void* aObject, void* aParams) const {
+			P1 p1 = asmith::get_parameter<P1>(aParams);
+			P2 p2 = asmith::get_parameter<P2>(aParams);
+			P3 p3 = asmith::get_parameter<P3>(aParams);
+			P4 p4 = asmith::get_parameter<P4>(aParams);
+			new(aObject) T(p1, p2, p3, p4);
 		}
 
 		template<class T, class P1, class P2, class P3, class P4, class P5>
-		void call__(void* aObject, const void* aParams) const {
-			const P1* const p1 = reinterpret_cast<const P1*>(aParams);
-			const P2* const p2 = reinterpret_cast<const P2*>(reinterpret_cast<const uint8_t*>(p1) + sizeof(P1));
-			const P3* const p3 = reinterpret_cast<const P3*>(reinterpret_cast<const uint8_t*>(p2) + sizeof(P2));
-			const P4* const p3 = reinterpret_cast<const P4*>(reinterpret_cast<const uint8_t*>(p3) + sizeof(P3));
-			const P5* const p3 = reinterpret_cast<const P5*>(reinterpret_cast<const uint8_t*>(p4) + sizeof(P4));
-			new(aObject) T(*p1, *p2, *p3, *p4, *p5);
+		void call__(void* aObject, void* aParams) const {
+			P1 p1 = asmith::get_parameter<P1>(aParams);
+			P2 p2 = asmith::get_parameter<P2>(aParams);
+			P3 p3 = asmith::get_parameter<P3>(aParams);
+			P4 p4 = asmith::get_parameter<P4>(aParams);
+			P5 p5 = asmith::get_parameter<P5>(aParams);
+			new(aObject) T(p1, p2, p3, p4, p5);
 		}
 	public:
 		auto_reflection_constructor(const size_t aModifiers) :
@@ -126,7 +126,7 @@ namespace asmith {
 			return mModifiers;
 		}
 
-		void call_unsafe(void* aObject, const void* aParams) const override {
+		void call_unsafe(void* aObject, void* aParams) const override {
 			call__<CLASS, PARAMS...>(aObject, aParams);
 		}
 	};

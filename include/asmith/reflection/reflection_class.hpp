@@ -421,6 +421,29 @@ namespace asmith {
 		return implementation::reflect_type_at_<sizeof...(TYPES), TYPES...>::reflect_type_at(aIndex);
 	}
 
+	namespace implementation {
+		template<class T>
+		struct get_parameter_ {
+			static T get_parameter(void*& aParam) {
+				uint8_t* tmp = reinterpret_cast<uint8_t*>(aParam);
+				aParam = tmp + sizeof(T);
+				return *reinterpret_cast<T*>(tmp);
+			}
+		};
+
+		template<class T>
+		struct get_parameter_<T&> {
+			static T& get_parameter(void*& aParam) {
+				static_assert(false, "asmith::get_parameter : Not yet implemented for references");
+			}
+		};
+	}
+
+	template<class T>
+	T get_parameter(void*& aParam) {
+		return implementation::get_parameter_<T>::get_parameter(aParam);
+	}
+
 	template<class CLASS, size_t S>
 	class fixed_array_reflection_class : public implementation::auto_reflection_class_ {
 	public:

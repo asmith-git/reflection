@@ -35,7 +35,7 @@ namespace asmith {
 		reflection_instance(const reflection_instance&);
 		~reflection_instance();
 
-		reflection_instance call_unsafe(const char*, const void*);
+		reflection_instance call_unsafe(const char*, void*);
 		const reflection_class& get_class() const;
 		void* as_unsafe();
 		const void* as_unsafe() const;
