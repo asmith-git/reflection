@@ -433,8 +433,10 @@ namespace asmith {
 
 		template<class T>
 		struct get_parameter_<T&> {
-			static T& get_parameter(void*& aParam) {
-				static_assert(false, "asmith::get_parameter : Not yet implemented for references");
+			static std::reference_wrapper<T> get_parameter(void*& aParam) {
+				uint8_t* tmp = reinterpret_cast<uint8_t*>(aParam);
+				aParam = tmp + sizeof(std::reference_wrapper<T>);
+				return *reinterpret_cast<std::reference_wrapper<T>*>(tmp);
 			}
 		};
 	}

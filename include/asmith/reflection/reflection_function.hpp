@@ -154,7 +154,7 @@ namespace asmith {
 		void call__(void* aObject, void* aReturn, void* aParams) const {
 			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
+			auto p1 = asmith::get_parameter<P1>(aParams);
 			mFunction(obj, ret, p1);
 		}
 
@@ -162,8 +162,8 @@ namespace asmith {
 		void call__(void* aObject, void* aReturn, void* aParams) const {
 			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
+			auto p1 = asmith::get_parameter<P1>(aParams);
+			auto p2 = asmith::get_parameter<P2>(aParams);
 			mFunction(obj, ret, p1, p2);
 		}
 
@@ -171,9 +171,9 @@ namespace asmith {
 		void call__(void* aObject, void* aReturn, void* aParams) const {
 			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
-			P3 p3 = asmith::get_parameter<P3>(aParams);
+			auto p1 = asmith::get_parameter<P1>(aParams);
+			auto p2 = asmith::get_parameter<P2>(aParams);
+			auto p3 = asmith::get_parameter<P3>(aParams);
 			mFunction(obj, ret, p1, p2, p3);
 		}
 
@@ -181,10 +181,10 @@ namespace asmith {
 		void call__(void* aObject, void* aReturn, void* aParams) const {
 			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
-			P3 p3 = asmith::get_parameter<P3>(aParams);
-			P4 p4 = asmith::get_parameter<P4>(aParams);
+			auto p1 = asmith::get_parameter<P1>(aParams);
+			auto p2 = asmith::get_parameter<P2>(aParams);
+			auto p3 = asmith::get_parameter<P3>(aParams);
+			auto p4 = asmith::get_parameter<P4>(aParams);
 			mFunction(obj, ret, p1, p2, p3, p4);
 		}
 
@@ -192,11 +192,11 @@ namespace asmith {
 		void call__(void* aObject, void* aReturn, void* aParams) const {
 			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
-			P1 p1 = asmith::get_parameter<P1>(aParams);
-			P2 p2 = asmith::get_parameter<P2>(aParams);
-			P3 p3 = asmith::get_parameter<P3>(aParams);
-			P4 p4 = asmith::get_parameter<P4>(aParams);
-			P5 p5 = asmith::get_parameter<P5>(aParams);
+			auto p1 = asmith::get_parameter<P1>(aParams);
+			auto p2 = asmith::get_parameter<P2>(aParams);
+			auto p3 = asmith::get_parameter<P3>(aParams);
+			auto p4 = asmith::get_parameter<P4>(aParams);
+			auto p5 = asmith::get_parameter<P5>(aParams);
 			mFunction(obj, ret, p1, p2, p3, p4, p5);
 		}
 
