@@ -195,7 +195,7 @@ namespace asmith {
 		template<class RETURN, class... PARAMS>
 		auto_reflection_class& function(const std::string& aName, typename function_ptr<CLASS, RETURN, PARAMS...>::type aPtr, const size_t aModifiers) {
 			mFunctions.push_back(std::shared_ptr<reflection_function>(
-				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
+				new auto_reflection_function<CLASS, decltype(aPtr), RETURN, PARAMS...>(aName, aPtr, aModifiers)
 				));
 			return *this;
 		}
@@ -203,7 +203,7 @@ namespace asmith {
 		template<class RETURN, class... PARAMS>
 		auto_reflection_class& function(const std::string& aName, typename function_ptr<CLASS, RETURN, PARAMS...>::const_type aPtr, const size_t aModifiers) {
 			mFunctions.push_back(std::shared_ptr<reflection_function>(
-				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
+				new auto_reflection_function<CLASS, decltype(aPtr), RETURN, PARAMS...>(aName, aPtr, aModifiers)
 			));
 			return *this;
 		}
@@ -211,7 +211,7 @@ namespace asmith {
 		template<class RETURN, class... PARAMS>
 		auto_reflection_class& function(const std::string& aName, typename function_ptr<CLASS, RETURN, PARAMS...>::static_type aPtr, const size_t aModifiers) {
 			mFunctions.push_back(std::shared_ptr<reflection_function>(
-				new auto_reflection_function<CLASS, RETURN, PARAMS...>(aName, aPtr, aModifiers)
+				new auto_reflection_function<CLASS, decltype(aPtr), RETURN, PARAMS...>(aName, aPtr, aModifiers)
 				));
 			return *this;
 		}

@@ -14,7 +14,6 @@
 #ifndef ASMITH_REFLECTION_FUNCTION_HPP
 #define ASMITH_REFLECTION_FUNCTION_HPP
 
-#include <functional>
 #include <string>
 #include "template_helper.hpp"
 
@@ -130,24 +129,62 @@ namespace asmith {
 		}
 	};
 
-	template<class CLASS, class RETURN, class... PARAMS>
+	namespace implementation {
+		template<class CLASS, class RETURN, class ...PARAMS>
+		struct reflection_function_dispatch {
+			typedef RETURN(CLASS::*ptr_t)(PARAMS...);
+			typedef RETURN(CLASS::*const_ptr_t)(PARAMS...) const;
+			typedef RETURN(*static_ptr_t)(PARAMS...);
+
+			static inline void execute(CLASS* const aObject, RETURN* aReturn, ptr_t aPtr, PARAMS... aParams) {
+				*aReturn = ((aObject)->*(aPtr))(aParams...);
+			}
+
+			static inline void execute(CLASS* const aObject, RETURN* aReturn, const_ptr_t aPtr, PARAMS... aParams) {
+				*aReturn = ((aObject)->*(aPtr))(aParams...);
+			}
+
+			static inline void execute(CLASS* const aObject, RETURN* aReturn, static_ptr_t aPtr, PARAMS... aParams) {
+				*aReturn = aPtr(aParams...);
+			}
+		};
+
+		template<class CLASS, class ...PARAMS>
+		struct reflection_function_dispatch<CLASS, void, PARAMS...> {
+			typedef void(CLASS::*ptr_t)(PARAMS...);
+			typedef void(CLASS::*const_ptr_t)(PARAMS...) const;
+			typedef void(*static_ptr_t)(PARAMS...);
+
+			static inline void execute(CLASS* const aObject, void* aReturn, ptr_t aPtr, PARAMS... aParams) {
+				((aObject)->*(aPtr))(aParams...);
+			}
+
+			static inline void execute(CLASS* const aObject, void* aReturn, const_ptr_t aPtr, PARAMS... aParams) {
+				((aObject)->*(aPtr))(aParams...);
+			}
+
+			static inline void execute(CLASS* const aObject, void* aReturn, static_ptr_t aPtr, PARAMS... aParams) {
+				aPtr(aParams...);
+			}
+		};
+	}
+
+	template<class CLASS, class FUNCTION, class RETURN, class... PARAMS>
 	class auto_reflection_function : public reflection_function {
 	public:
 		typedef RETURN(CLASS::*ptr_t)(PARAMS...);
 		typedef RETURN(CLASS::*const_ptr_t)(PARAMS...) const;
 		typedef RETURN(*static_ptr_t)(PARAMS...);
 	private:
-		typedef std::function<void(CLASS*, RETURN*, PARAMS...)> function_t;
 		const std::string mName;
-		const function_t mFunction;
 		const size_t mModifiers;
-
+		const FUNCTION mPtr;
 
 		template<class R>
 		void call__(void* aObject, void* aReturn, void* aParams) const {
 			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
-			mFunction(obj, ret);
+			implementation::reflection_function_dispatch<CLASS, RETURN, PARAMS...>::execute(obj, ret, mPtr);
 		}
 
 		template<class R, class P1>
@@ -155,7 +192,7 @@ namespace asmith {
 			CLASS* const obj = reinterpret_cast<CLASS*>(aObject);
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
 			auto p1 = asmith::get_parameter<P1>(aParams);
-			mFunction(obj, ret, p1);
+			implementation::reflection_function_dispatch<CLASS, RETURN, PARAMS...>::execute(obj, ret, mPtr, p1);
 		}
 
 		template<class R, class P1, class P2>
@@ -164,7 +201,7 @@ namespace asmith {
 			R* const ret = reinterpret_cast<RETURN*>(aReturn);
 			auto p1 = asmith::get_parameter<P1>(aParams);
 			auto p2 = asmith::get_parameter<P2>(aParams);
-			mFunction(obj, ret, p1, p2);
+			implementation::reflection_function_dispatch<CLASS, RETURN, PARAMS...>::execute(obj, ret, mPtr, p1, p2);
 		}
 
 		template<class R, class P1, class P2, class P3>
@@ -174,7 +211,7 @@ namespace asmith {
 			auto p1 = asmith::get_parameter<P1>(aParams);
 			auto p2 = asmith::get_parameter<P2>(aParams);
 			auto p3 = asmith::get_parameter<P3>(aParams);
-			mFunction(obj, ret, p1, p2, p3);
+			implementation::reflection_function_dispatch<CLASS, RETURN, PARAMS...>::execute(obj, ret, mPtr, p1, p2, p3);
 		}
 
 		template<class R, class P1, class P2, class P3, class P4>
@@ -185,7 +222,7 @@ namespace asmith {
 			auto p2 = asmith::get_parameter<P2>(aParams);
 			auto p3 = asmith::get_parameter<P3>(aParams);
 			auto p4 = asmith::get_parameter<P4>(aParams);
-			mFunction(obj, ret, p1, p2, p3, p4);
+			implementation::reflection_function_dispatch<CLASS, RETURN, PARAMS...>::execute(obj, ret, mPtr, p1, p2, p3, p4);
 		}
 
 		template<class R, class P1, class P2, class P3, class P4, class P5>
@@ -197,67 +234,14 @@ namespace asmith {
 			auto p3 = asmith::get_parameter<P3>(aParams);
 			auto p4 = asmith::get_parameter<P4>(aParams);
 			auto p5 = asmith::get_parameter<P5>(aParams);
-			mFunction(obj, ret, p1, p2, p3, p4, p5);
+			implementation::reflection_function_dispatch<CLASS, RETURN, PARAMS...>::execute(obj, ret, mPtr, p1, p2, p3, p4, p5);
 		}
 
-		template<class R>
-		static typename std::enable_if<std::is_same<R, void>::value, function_t>::type wrap_function(const ptr_t aPtr) {
-			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
-				((aObject)->*(aPtr))(aParams...);
-			};
-		}
-
-		template<class R>
-		static typename std::enable_if<std::is_same<R, void>::value, function_t>::type wrap_function(const const_ptr_t aPtr) {
-			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
-				((aObject)->*(aPtr))(aParams...);
-			};
-		}
-
-		template<class R>
-		static typename std::enable_if<std::is_same<R, void>::value, function_t>::type wrap_function(const static_ptr_t aPtr) {
-			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
-				aPtr(aParams...);
-			};
-		}
-
-		template<class R>
-		static typename std::enable_if<! std::is_same<R, void>::value, function_t>::type wrap_function(const ptr_t aPtr) {
-			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
-				*aReturn = ((aObject)->*(aPtr))(aParams...);
-			};
-		}
-
-		template<class R>
-		static typename std::enable_if<! std::is_same<R, void>::value, function_t>::type wrap_function(const const_ptr_t aPtr) {
-			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
-				*aReturn = ((aObject)->*(aPtr))(aParams...);
-			};
-		}
-
-		template<class R>
-		static typename std::enable_if<! std::is_same<R, void>::value, function_t>::type wrap_function(const static_ptr_t aPtr) {
-			return [aPtr](CLASS* aObject, RETURN* aReturn, PARAMS... aParams)->void {
-				*aReturn = aPtr(aParams...);
-			};
-		}
 	public:
-		auto_reflection_function(const std::string& aName, const ptr_t aPtr, const size_t aModifiers) :
+		auto_reflection_function(const std::string& aName, const FUNCTION aPtr, const size_t aModifiers) :
 			mName(aName),
 			mModifiers(aModifiers),
-			mFunction(wrap_function<RETURN>(aPtr))
-		{}
-
-		auto_reflection_function(const std::string& aName, const const_ptr_t aPtr, const size_t aModifiers) :
-			mName(aName),
-			mModifiers(aModifiers),
-			mFunction(wrap_function<RETURN>(aPtr))
-		{}
-
-		auto_reflection_function(const std::string& aName, const static_ptr_t aPtr, const size_t aModifiers) :
-			mName(aName),
-			mModifiers(aModifiers),
-			mFunction(wrap_function<RETURN>(aPtr))
+			mPtr(aPtr)
 		{}
 
 		// Inherited from reflection_function
@@ -285,6 +269,15 @@ namespace asmith {
 			call__<RETURN, PARAMS...>(aObject, aReturn, aParams);
 		}
 	};
+
+	template<class CLASS, class RETURN, class... PARAMS>
+	using member_reflection_function = auto_reflection_function<CLASS, RETURN, RETURN(CLASS::*)(PARAMS...), PARAMS...>;
+
+	template<class CLASS, class RETURN, class... PARAMS>
+	using const_member_reflection_function = auto_reflection_function<CLASS, RETURN, RETURN(CLASS::*)(PARAMS...) const, PARAMS...>;
+
+	template<class CLASS, class RETURN, class... PARAMS>
+	using static_reflection_function = auto_reflection_function<CLASS, RETURN, RETURN(*)(PARAMS...), PARAMS...>;
 }
 
 #endif
