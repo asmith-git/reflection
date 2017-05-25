@@ -32,6 +32,7 @@ namespace asmith {
 	class reflection_class {
 	protected:
 		static void register_class(const reflection_class&) throw();
+		static std::vector<const reflection_class*> extract_templates(const char*);
 	public:
 		static const reflection_class& get_class_by_name(const char*);
 
@@ -48,6 +49,8 @@ namespace asmith {
 		virtual const reflection_destructor& get_destructor() const = 0;
 		virtual size_t get_parent_count() const = 0;
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
+		virtual size_t get_template_count() const = 0;
+		virtual const reflection_class& get_template(size_t) const = 0;
 
 		virtual const reflection_constructor& get_copy_constructor() const;
 		virtual const reflection_constructor& get_move_constructor() const;
@@ -76,6 +79,7 @@ namespace asmith {
 			std::vector<std::shared_ptr<reflection_variable>> mVariables;
 			std::vector<std::shared_ptr<reflection_function>> mFunctions;
 			std::shared_ptr<reflection_destructor> mDestructor;
+			std::vector<const reflection_class*> mTemplates;
 			const std::string mName;
 			const size_t mSize;
 
@@ -93,7 +97,8 @@ namespace asmith {
 		public:
 			auto_reflection_class_(const std::string& aName, const size_t aSize) :
 				mName(aName),
-				mSize(aSize)
+				mSize(aSize),
+				mTemplates(extract_templates(aName.c_str()))
 			{
 				register_class(*this);
 			}
@@ -147,6 +152,15 @@ namespace asmith {
 			const reflection_class& get_parent_class(size_t aIndex) const override {
 				return *mParents[aIndex];
 			}
+			
+			size_t get_template_count() const override {
+				return mTemplates.size();
+			}
+			
+			const reflection_class& get_template(size_t aIndex) const override {
+				return *mTemplates[aIndex];
+			}
+
 		};
 	}
 
@@ -249,7 +263,7 @@ namespace asmith {
 		}
 
 		const reflection_function& get_function(size_t aIndex) const override {
-			throw std::runtime_error("asmith::get_function::get_variable : Type is void");
+			throw std::runtime_error("asmith::reflection_class::get_variable : Type is void");
 		}
 
 		size_t get_constructor_count() const override {
@@ -257,11 +271,11 @@ namespace asmith {
 		}
 
 		const reflection_constructor& get_constructor(size_t aIndex) const override {
-			throw std::runtime_error("asmith::get_function::get_constructor : Type is void");
+			throw std::runtime_error("asmith::reflection_class::get_constructor : Type is void");
 		}
 
 		const reflection_destructor& get_destructor() const override {
-			throw std::runtime_error("asmith::get_function::get_destructor : Type is void");
+			throw std::runtime_error("asmith::reflection_class::get_destructor : Type is void");
 		}
 
 		size_t get_parent_count() const override {
@@ -269,7 +283,15 @@ namespace asmith {
 		}
 
 		const reflection_class& get_parent_class(size_t aIndex) const override {
-			throw std::runtime_error("asmith::get_function::get_parent_class : Type is void");
+			throw std::runtime_error("asmith::reflection_class::get_parent_class : Type is void");
+		}
+
+		size_t get_template_count() const override {
+			return 0;
+		}
+
+		const reflection_class& get_template(size_t aIndex) const override {
+			throw std::runtime_error("asmith::reflection_class::get_template : Type is void");
 		}
 	};
 
@@ -511,7 +533,7 @@ namespace asmith {
 		}
 
 		const reflection_function& get_function(size_t aIndex) const override {
-			throw std::runtime_error("asmith::get_function::get_variable : Type is undefined");
+			throw std::runtime_error("asmith::reflection_class::get_variable : Type is undefined");
 		}
 
 		size_t get_constructor_count() const override {
@@ -519,11 +541,11 @@ namespace asmith {
 		}
 
 		const reflection_constructor& get_constructor(size_t aIndex) const override {
-			throw std::runtime_error("asmith::get_function::get_constructor : Type is undefined");
+			throw std::runtime_error("asmith::reflection_class::get_constructor : Type is undefined");
 		}
 
 		const reflection_destructor& get_destructor() const override {
-			throw std::runtime_error("asmith::get_function::get_destructor : Type is undefined");
+			throw std::runtime_error("asmith::reflection_class::get_destructor : Type is undefined");
 		}
 
 		size_t get_parent_count() const override {
@@ -531,7 +553,15 @@ namespace asmith {
 		}
 
 		const reflection_class& get_parent_class(size_t aIndex) const override {
-			throw std::runtime_error("asmith::get_function::get_parent_class : Type is undefined");
+			throw std::runtime_error("asmith::reflection_class::get_parent_class : Type is undefined");
+		}
+
+		size_t get_template_count() const override {
+			return 0;
+		}
+
+		const reflection_class& get_template(size_t aIndex) const override {
+			throw std::runtime_error("asmith::reflection_class::get_template : Type is undefined");
 		}
 	};
 

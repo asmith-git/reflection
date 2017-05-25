@@ -25,6 +25,11 @@ namespace asmith {
 
 	// reflection_class
 
+	std::vector<const reflection_class*> reflection_class::extract_templates(const char* aName) {
+		//! \todo Implement
+		return std::vector<const reflection_class*>();
+	}
+
 	void reflection_class::register_class(const reflection_class& aClass) throw() {
 		REFLECTION_CLASS_MAP_LOCK.lock();
 			REFLECTION_CLASS_MAP.emplace(aClass.get_name(), &aClass);
