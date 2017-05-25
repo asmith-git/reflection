@@ -171,10 +171,6 @@ namespace asmith {
 
 	template<class CLASS, class FUNCTION, class RETURN, class... PARAMS>
 	class auto_reflection_function : public reflection_function {
-	public:
-		typedef RETURN(CLASS::*ptr_t)(PARAMS...);
-		typedef RETURN(CLASS::*const_ptr_t)(PARAMS...) const;
-		typedef RETURN(*static_ptr_t)(PARAMS...);
 	private:
 		const std::string mName;
 		const size_t mModifiers;
