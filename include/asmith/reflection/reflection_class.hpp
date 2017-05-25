@@ -32,7 +32,7 @@ namespace asmith {
 	class reflection_class {
 	protected:
 		static void register_class(const reflection_class&) throw();
-		static std::vector<const reflection_class*> extract_templates(const char*);
+		static std::vector<std::string> extract_templates(const char*);
 	public:
 		static const reflection_class& get_class_by_name(const char*);
 
@@ -79,7 +79,7 @@ namespace asmith {
 			std::vector<std::shared_ptr<reflection_variable>> mVariables;
 			std::vector<std::shared_ptr<reflection_function>> mFunctions;
 			std::shared_ptr<reflection_destructor> mDestructor;
-			std::vector<const reflection_class*> mTemplates;
+			std::vector<std::string> mTemplates;
 			const std::string mName;
 			const size_t mSize;
 
@@ -158,7 +158,7 @@ namespace asmith {
 			}
 			
 			const reflection_class& get_template(size_t aIndex) const override {
-				return *mTemplates[aIndex];
+				return get_class_by_name(mTemplates[aIndex].c_str());
 			}
 
 		};

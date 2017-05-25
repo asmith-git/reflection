@@ -14,6 +14,7 @@
 #include "asmith/reflection/reflection_class.hpp"
 #include <map>
 #include <mutex>
+#include <cctype>
 #include "asmith/reflection/reflection_constructor.hpp"
 #include "asmith/reflection/reflection_function.hpp"
 #include "asmith/reflection/reflection_variable.hpp"
@@ -25,9 +26,28 @@ namespace asmith {
 
 	// reflection_class
 
-	std::vector<const reflection_class*> reflection_class::extract_templates(const char* aName) {
-		//! \todo Implement
-		return std::vector<const reflection_class*>();
+	std::vector<std::string> reflection_class::extract_templates(const char* aName) {
+		std::vector<std::string> templates;
+		while(*aName != '<') {
+			if(*aName == '\0') return templates;
+			++aName;
+		}
+		++aName;
+
+		//! \todo Handle nested templates
+		std::string n;
+		while(*aName != '>' && *aName != '\0') {
+			while(*aName != ',') {
+				if (*aName == '>' || *aName == '\0') break;
+				if(! std::isspace(*aName)) n += *aName;
+				++aName;
+			}
+			templates.push_back(n);
+			++aName;
+			n.clear();
+		}
+
+		return templates;
 	}
 
 	void reflection_class::register_class(const reflection_class& aClass) throw() {
