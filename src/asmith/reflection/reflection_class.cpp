@@ -78,9 +78,10 @@ namespace asmith {
 				}
 			}
 			REFLECTION_CLASS_MAP_LOCK.unlock();
+		}else {
+			return *tmp;
 		}
-
-		return *tmp;
+		return INVALID_REFLECTION_CLASS;
 	}
 
 	const reflection_constructor& reflection_class::get_copy_constructor() const {
