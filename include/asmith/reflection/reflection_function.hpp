@@ -18,6 +18,8 @@
 #include "template_helper.hpp"
 
 namespace asmith {
+
+	//! \todo Handle reference as return
 	
 	class reflection_class;
 	

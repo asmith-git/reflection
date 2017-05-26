@@ -403,6 +403,22 @@ namespace asmith {
 		const reflection_class& get_parent_class(size_t aIndex) const override {
 			return reflect<CLASS>().get_parent_class(aIndex);
 		}
+
+		size_t get_template_count() const override {
+			return reflect<CLASS>().get_template_count();
+		}
+
+		const reflection_class& get_template(size_t aIndex) const override {
+			return reflect<CLASS>().get_template(aIndex);
+		}
+
+		size_t get_alias_count() const override {
+			return reflect<CLASS>().get_alias_count();
+		}
+
+		const char* get_alias(size_t aIndex) const override {
+			return reflect<CLASS>().get_alias(aIndex);
+		}
 	};
 
 	template<class CLASS>
