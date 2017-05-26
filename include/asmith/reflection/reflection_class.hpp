@@ -51,6 +51,8 @@ namespace asmith {
 		virtual const reflection_class& get_parent_class(size_t) const = 0;
 		virtual size_t get_template_count() const = 0;
 		virtual const reflection_class& get_template(size_t) const = 0;
+		virtual size_t get_alias_count() const = 0;
+		virtual const char* get_alias(size_t) const = 0;
 
 		virtual const reflection_constructor& get_copy_constructor() const;
 		virtual const reflection_constructor& get_move_constructor() const;
@@ -80,6 +82,7 @@ namespace asmith {
 			std::vector<std::shared_ptr<reflection_function>> mFunctions;
 			std::shared_ptr<reflection_destructor> mDestructor;
 			std::vector<std::string> mTemplates;
+			std::vector<std::string> mAlias;
 			const std::string mName;
 			const size_t mSize;
 
@@ -159,6 +162,14 @@ namespace asmith {
 			
 			const reflection_class& get_template(size_t aIndex) const override {
 				return get_class_by_name(mTemplates[aIndex].c_str());
+			}
+
+			size_t get_alias_count() const override {
+				return mAlias.size();
+			}
+
+			const char*get_alias(size_t aIndex) const override {
+				return mAlias[aIndex].c_str();
 			}
 
 		};
@@ -292,6 +303,14 @@ namespace asmith {
 
 		const reflection_class& get_template(size_t aIndex) const override {
 			throw std::runtime_error("asmith::reflection_class::get_template : Type is void");
+		}
+
+		size_t get_alias_count() const override {
+			return 0;
+		}
+
+		const char* get_alias(size_t aIndex) const override {
+			throw std::runtime_error("asmith::reflection_class::get_alias : Type is void");
 		}
 	};
 
@@ -562,6 +581,14 @@ namespace asmith {
 
 		const reflection_class& get_template(size_t aIndex) const override {
 			throw std::runtime_error("asmith::reflection_class::get_template : Type is undefined");
+		}
+
+		size_t get_alias_count() const override {
+			return 0;
+		}
+
+		const char* get_alias(size_t aIndex) const override {
+			throw std::runtime_error("asmith::reflection_class::get_alias : Type is undefined");
 		}
 	};
 

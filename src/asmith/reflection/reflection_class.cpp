@@ -58,11 +58,28 @@ namespace asmith {
 
 	const reflection_class& reflection_class::get_class_by_name(const char* aName) {
 		const reflection_class* tmp = nullptr;
+
+		// Search by class name
 		REFLECTION_CLASS_MAP_LOCK.lock();
 			const auto i = REFLECTION_CLASS_MAP.find(aName);
 			if(i != REFLECTION_CLASS_MAP.end()) tmp = i->second;
 		REFLECTION_CLASS_MAP_LOCK.unlock();
-		if(tmp == nullptr) return INVALID_REFLECTION_CLASS;
+
+		// Search by alias
+		if(tmp == nullptr) {
+			REFLECTION_CLASS_MAP_LOCK.lock();
+			for(const auto& i : REFLECTION_CLASS_MAP) {
+				const size_t s = i.second->get_alias_count();
+				for(size_t j = 0; j < s; ++j) {
+					if(strcmp(aName, i.second->get_alias(j)) == 0) {
+						REFLECTION_CLASS_MAP_LOCK.unlock();
+						return *i.second;
+					}
+				}
+			}
+			REFLECTION_CLASS_MAP_LOCK.unlock();
+		}
+
 		return *tmp;
 	}
 
