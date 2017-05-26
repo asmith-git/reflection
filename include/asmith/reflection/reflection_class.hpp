@@ -31,9 +31,9 @@ namespace asmith {
 	
 	class reflection_class {
 	protected:
-		static void register_class(const reflection_class&) throw();
 		static std::vector<std::string> extract_templates(const char*);
 	public:
+		static void register_class(const reflection_class&) throw();
 		static const reflection_class& get_class_by_name(const char*);
 
 		virtual ~reflection_class() {}
@@ -102,9 +102,7 @@ namespace asmith {
 				mName(aName),
 				mSize(aSize),
 				mTemplates(extract_templates(aName.c_str()))
-			{
-				register_class(*this);
-			}
+			{}
 
 			virtual ~auto_reflection_class_() {
 
