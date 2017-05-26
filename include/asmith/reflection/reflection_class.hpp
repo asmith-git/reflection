@@ -203,6 +203,11 @@ namespace asmith {
 			return *this;
 		}
 
+		auto_reflection_class& alias(const char* aAlias) {
+			mAlias.push_back(aAlias);
+			return *this;
+		}
+
 		template<class PARENT>
 		auto_reflection_class& parent() {
 			mFunctions.push_back(&reflect<PARENT>());

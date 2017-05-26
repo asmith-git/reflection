@@ -33,16 +33,43 @@ namespace asmith {
 		}\
 	};
 
+#define ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS(aName, aAlias)\
+	template<>\
+	struct asmith::reflection_specialisation<aName> {\
+		static inline const asmith::reflection_class& reflect() throw() {\
+			static const asmith::auto_reflection_class<aName> REFLECTION = auto_reflection_class<aName>(#aName)\
+				.constructor(asmith::REFLECTION_PUBLIC)\
+				.constructor<aName>(asmith::REFLECTION_PUBLIC)\
+				.destructor(asmith::REFLECTION_PUBLIC)\
+				.alias(#aAlias);\
+			return REFLECTION;\
+		}\
+	};
+
+#define ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS_2(aName, aAlias1, aAlias2)\
+	template<>\
+	struct asmith::reflection_specialisation<aName> {\
+		static inline const asmith::reflection_class& reflect() throw() {\
+			static const asmith::auto_reflection_class<aName> REFLECTION = auto_reflection_class<aName>(#aName)\
+				.constructor(asmith::REFLECTION_PUBLIC)\
+				.constructor<aName>(asmith::REFLECTION_PUBLIC)\
+				.destructor(asmith::REFLECTION_PUBLIC)\
+				.alias(#aAlias1)\
+				.alias(#aAlias2);\
+			return REFLECTION;\
+		}\
+	};
+
 	ASMITH_REFLECTION_PRIMATIVE_REFLECT(bool)
 	ASMITH_REFLECTION_PRIMATIVE_REFLECT(char)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint8_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint16_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint32_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(uint64_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int8_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int16_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int32_t)
-	ASMITH_REFLECTION_PRIMATIVE_REFLECT(int64_t)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS(uint8_t, unsigned char)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS(uint16_t, unsigned short)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS(uint32_t, unsigned int)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS(uint64_t, unsigned long)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS(int8_t, signed char)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS_2(int16_t, signed short, short)
+	ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS_2(int32_t, signed int, int)
+		ASMITH_REFLECTION_PRIMATIVE_REFLECT_WITH_ALIAS_2(int64_t, signed long, long)
 	ASMITH_REFLECTION_PRIMATIVE_REFLECT(float)
 	ASMITH_REFLECTION_PRIMATIVE_REFLECT(double)
 }
